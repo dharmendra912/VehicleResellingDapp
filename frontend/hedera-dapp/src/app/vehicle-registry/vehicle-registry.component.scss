@@ -1,0 +1,17 @@
+$input-margin: 5px;
+$input-padding: 5px;
+$input-width: 300px;
+
+$button-margin: 5px;
+$button-padding: 5px 10px;
+
+input {
+  margin: $input-margin;
+  padding: $input-padding;
+  width: $input-width;
+}
+
+button {
+  margin: $button-margin;
+  padding: $button-padding;
+}

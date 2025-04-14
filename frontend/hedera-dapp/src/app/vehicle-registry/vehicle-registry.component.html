@@ -1,0 +1,15 @@
+<h2>Vehicle Registry</h2>
+
+<input [(ngModel)]="vehicleId" placeholder="Vehicle ID" />
+
+<div style="margin-top: 10px;">
+  <button (click)="register()">Register Vehicle</button>
+  <br /><br />
+
+  <input [(ngModel)]="newOwner" placeholder="New Owner Address" />
+  <button (click)="resell()">Resell Vehicle</button>
+  <br /><br />
+
+  <button (click)="getOwner()">Get Owner</button>
+  <p *ngIf="owner">Current Owner: {{ owner }}</p>
+</div>

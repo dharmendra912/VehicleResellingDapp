@@ -1,0 +1,25 @@
+.container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+input {
+  padding: 8px;
+  margin: 5px;
+  width: 300px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #0f2e7c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1a44b3;
+} 
