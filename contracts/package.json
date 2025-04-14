@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "contracts",
   "version": "1.0.0",
   "main": "deploy.js",
   "scripts": {

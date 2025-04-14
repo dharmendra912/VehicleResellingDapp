@@ -3,11 +3,11 @@
 .env.*
 !.env.example
 
-# Environment files in frontend and backend
+# Environment files in frontend and contracts
 frontend/.env
 frontend/.env.*
-backend/.env
-backend/.env.*
+contracts/.env
+contracts/.env.*
 
 # Node modules
 **/node_modules/
