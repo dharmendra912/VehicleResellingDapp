@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" version="26.2.12">
+  <diagram name="Web3 Dapp No Backend" id="1">
+    <mxGraphModel dx="742" dy="385" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;User&lt;/span&gt;&lt;/div&gt;" style="shape=actor;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="20" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="Browser" style="image;aspect=fixed;html=1;align=center;fontSize=12;image=img/lib/azure2/general/Browser.svg;" parent="1" vertex="1">
+          <mxGeometry x="120" y="20" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="metamask" value="Metamask" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;fontColor=#4277BB;fontSize=12;image=img/lib/ibm/blockchain/wallet.svg;" parent="1" vertex="1">
+          <mxGeometry x="350" y="25" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" value="Front-End (Angular)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;fillColor=#F7DF1E;strokeColor=#E65100;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="100" y="140" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="smartcontracts" value="Smart Contracts&#xa;Hedera Testnet" style="shape=hexagon;whiteSpace=wrap;html=1;fillColor=#E0F7FA;strokeColor=#00838F;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="100" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" style="endArrow=classic;html=1;" parent="1" source="user" target="browser" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" style="endArrow=classic;html=1;" parent="1" source="browser" target="metamask" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" style="endArrow=classic;html=1;" parent="1" source="browser" target="frontend" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" value="sign tx" style="endArrow=classic;dashed=1;html=1;" parent="1" source="frontend" target="metamask" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" value="call contract" style="endArrow=classic;html=1;" parent="1" source="frontend" target="smartcontracts" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" value="broadcast tx" style="endArrow=classic;dashed=1;html=1;" parent="1" source="metamask" target="smartcontracts" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
