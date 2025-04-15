@@ -7,7 +7,7 @@ require("dotenv").config();
 async function main() {
     const contractFile = process.argv[2];
     if (!contractFile) {
-        console.error("Please provide the contract filename (e.g., VehicleRegistry.sol)");
+        console.error("Please provide the contract filename (e.g., sample.sol)");
         process.exit(1);
     }
 
@@ -55,7 +55,7 @@ async function main() {
     console.log("EVM Address:", evmAddress);
     console.log("Explorer:", `https://hashscan.io/testnet/contract/${newContractId}`);
 
-    const entry = `${timestamp}: ${contractFile} - Contract ID: ${newContractId} (${evmAddress})\n`;
+    const entry = `${timestamp}: ${contractFile} - Contract ID: ${newContractId} - EVM Address: (${evmAddress})\n`;
     fs.appendFileSync("contracts.txt", entry);
     console.log("✅ Contract details appended to contracts.txt");
 }

@@ -25,6 +25,6 @@ const input = {
 const output = JSON.parse(solc.compile(JSON.stringify(input)));
 
 // Get bytecode
-const bytecode = output.contracts["VehicleRegistry.sol"]["VehicleRegistry"].evm.bytecode.object;
+const bytecode = output.contracts["VehicleRegistry.sol"]["sample.sol"].evm.bytecode.object;
 fs.writeFileSync("bytecode.txt", bytecode);
 console.log("✅ Compiled! Bytecode saved to bytecode.txt");
