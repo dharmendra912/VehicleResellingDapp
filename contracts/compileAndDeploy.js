@@ -1,4 +1,4 @@
-// Usage: node compileAndDeploy.js <.sol file)
+// Usage: node compileAndDeploy.js <.sol> file)
 
 const fs = require("fs");
 const solc = require("solc");
@@ -52,7 +52,7 @@ async function main() {
     client.setOperator(MY_ACCOUNT_ID, MY_PRIVATE_KEY);
 
     let contractCreate = new ContractCreateFlow()
-        .setGas(5_000_000)
+        .setGas(9_000_000)
         .setBytecode(bytecode);
 
     // If there are constructor parameters, add them
