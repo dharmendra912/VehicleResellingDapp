@@ -1,0 +1,8 @@
+explore implementation of gas limit.
+we can show current metamask account always in app header (may be then fetch more details like name and role and show them also).
+saving/showing transaction hash on each transaction (in a popup).
+confirmation popup dialog box.
+add some user roles, etc. in architecture diagram.
+angular hash based routing should be there for dapps.
+deployment as a dapp.
+file upload with web3.storage (ask key in popup).

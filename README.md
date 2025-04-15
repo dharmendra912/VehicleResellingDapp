@@ -34,3 +34,10 @@
 
 ## Notes
 - The application uses Angular 19.2.0
+
+
+# Resources
+- https://hashscan.io/ (to verify transaction)
+- https://portal.hedera.com/playground
+- https://remix.ethereum.org/ (for testing contracts)
+- https://www.rareskills.io/ (for learning)
