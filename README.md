@@ -41,3 +41,4 @@
 - https://portal.hedera.com/playground
 - https://remix.ethereum.org/ (for testing contracts)
 - https://www.rareskills.io/ (for learning)
+- https://solidity-by-example (code references)
