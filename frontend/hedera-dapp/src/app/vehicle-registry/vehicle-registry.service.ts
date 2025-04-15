@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import { Web3Service } from '../services/web3.service';
 import { VEHICLE_REGISTRY_ABI, VEHICLE_REGISTRY_CONTRACT_ADDRESS } from '../ABIs/vehicle-registry.abi';
+import {sign} from 'crypto';
 
 @Injectable({ providedIn: 'root' })
 export class VehicleRegistryService {

@@ -3,7 +3,7 @@
 const fs = require("fs");
 const solc = require("solc");
 const path = require("path");
-const { AccountId, PrivateKey, Client, ContractCreateFlow } = require("@hashgraph/sdk");
+const {AccountId, PrivateKey, Client, ContractCreateFlow, ContractFunctionParameters} = require("@hashgraph/sdk");
 require("dotenv").config();
 
 async function main() {
@@ -13,14 +13,21 @@ async function main() {
         process.exit(1);
     }
 
+    // Extract constructor parameters from command line arguments
+    const constructorParams = process.argv.slice(3);  // All parameters after the contract file
+
+    console.log("Contract file name", contractFile);
+    console.log("Constructor Parameters:", constructorParams);
+
     const source = fs.readFileSync(contractFile, "utf8");
     const input = {
         language: "Solidity",
-        sources: { [contractFile]: { content: source } },
-        settings: { outputSelection: { "*": { "*": ["*"] } } }
+        sources: {[contractFile]: {content: source}},
+        settings: {outputSelection: {"*": {"*": ["*"]}}}
     };
 
     const output = JSON.parse(solc.compile(JSON.stringify(input)));
+    console.log("output", output);
     const contractName = Object.keys(output.contracts[contractFile])[0];
     const bytecode = output.contracts[contractFile][contractName].evm.bytecode.object;
     const abi = output.contracts[contractFile][contractName].abi;
@@ -44,9 +51,22 @@ async function main() {
     const client = Client.forTestnet();
     client.setOperator(MY_ACCOUNT_ID, MY_PRIVATE_KEY);
 
-    const contractCreate = new ContractCreateFlow()
+    let contractCreate = new ContractCreateFlow()
         .setGas(5_000_000)
         .setBytecode(bytecode);
+
+    // If there are constructor parameters, add them
+    if (constructorParams.length > 0) {
+        // Convert the parameters into the correct format using ContractFunctionParameters
+        const contractFunctionParams = new ContractFunctionParameters();
+        constructorParams.forEach(param => {
+            contractFunctionParams.addString(param);  // Assuming parameters are strings, adjust for other types
+        });
+
+        console.log("Added ConstructorParameters ", contractFunctionParams)
+        contractCreate = contractCreate.setConstructorParameters(contractFunctionParams);
+    }
+
     const txResponse = await contractCreate.execute(client);
     const receipt = await txResponse.getReceipt(client);
     const record = await txResponse.getRecord(client);
