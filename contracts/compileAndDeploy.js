@@ -45,19 +45,21 @@ async function main() {
     client.setOperator(MY_ACCOUNT_ID, MY_PRIVATE_KEY);
 
     const contractCreate = new ContractCreateFlow()
-        .setGas(100000)
+        .setGas(5_000_000)
         .setBytecode(bytecode);
     const txResponse = await contractCreate.execute(client);
     const receipt = await txResponse.getReceipt(client);
+    const record = await txResponse.getRecord(client);
     const newContractId = receipt.contractId;
     const evmAddress = newContractId.toSolidityAddress();
 
     console.log("✅ Contract deployed!");
     console.log("Contract ID:", newContractId.toString());
     console.log("EVM Address:", evmAddress);
+    console.log("🔍 HBAR Charged:", parseFloat(record.transactionFee.toString()) / 100_000_000, "HBAR");
     console.log("Explorer:", `https://hashscan.io/testnet/contract/${newContractId}`);
 
-    const entry = `${timestamp}: ${contractFile} - Contract ID: ${newContractId} - EVM Address: (${evmAddress})\n`;
+    const entry = `${timestamp}: ${contractFile} - Contract ID: ${newContractId} - EVM Address: (0x${evmAddress})\n`;
     fs.appendFileSync("contracts.txt", entry);
     console.log("✅ Contract details appended to contracts.txt");
 }

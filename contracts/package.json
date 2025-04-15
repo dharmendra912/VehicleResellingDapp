@@ -10,7 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@hashgraph/sdk": "^2.19.0",
-    "dotenv": "^16.0.3"
+    "@hashgraph/sdk": "^2.62.0",
+    "dotenv": "^16.5.0",
+    "solc": "^0.8.29"
   }
 }
