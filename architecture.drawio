@@ -4,38 +4,92 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="user" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;User&lt;/span&gt;&lt;/div&gt;" style="shape=actor;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="40" y="20" width="40" height="60" as="geometry" />
+        <mxCell id="user" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;User" style="shape=actor;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="270" y="20" width="40" height="60" as="geometry" />
         </mxCell>
         <mxCell id="browser" value="Browser" style="image;aspect=fixed;html=1;align=center;fontSize=12;image=img/lib/azure2/general/Browser.svg;" parent="1" vertex="1">
-          <mxGeometry x="120" y="20" width="80" height="60" as="geometry" />
+          <mxGeometry x="80" y="170" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vS-2TlywlE9YAA-79DWf-16" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;exitX=0.25;exitY=0;exitDx=0;exitDy=0;elbow=vertical;" edge="1" parent="1" source="metamask" target="browser">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="474.1817233103825" y="120.00192356329674" as="sourcePoint" />
+            <mxPoint x="160" y="137.54" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vS-2TlywlE9YAA-79DWf-21" value="&lt;div&gt;Injected provider&lt;/div&gt;&lt;div&gt;(window.ethereum)&lt;/div&gt;&lt;div&gt;via plugin&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" vertex="1" connectable="0" parent="vS-2TlywlE9YAA-79DWf-16">
+          <mxGeometry x="0.5969" y="1" relative="1" as="geometry">
+            <mxPoint x="17" y="-25" as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="metamask" value="Metamask" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;fontColor=#4277BB;fontSize=12;image=img/lib/ibm/blockchain/wallet.svg;" parent="1" vertex="1">
-          <mxGeometry x="350" y="25" width="50" height="50" as="geometry" />
+          <mxGeometry x="520" y="180" width="50" height="50" as="geometry" />
         </mxCell>
         <mxCell id="frontend" value="Front-End (Angular)" style="shape=rectangle;rounded=1;whiteSpace=wrap;html=1;fillColor=#F7DF1E;strokeColor=#E65100;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="100" y="140" width="120" height="60" as="geometry" />
+          <mxGeometry x="305" y="320" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="smartcontracts" value="Smart Contracts&#xa;Hedera Testnet" style="shape=hexagon;whiteSpace=wrap;html=1;fillColor=#E0F7FA;strokeColor=#00838F;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="100" y="280" width="120" height="60" as="geometry" />
+        <mxCell id="edge1" value="" style="endArrow=classic;html=1;startArrow=classic;startFill=1;" parent="1" source="user" target="browser" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="50" />
+            </Array>
+          </mxGeometry>
         </mxCell>
-        <mxCell id="edge1" style="endArrow=classic;html=1;" parent="1" source="user" target="browser" edge="1">
+        <mxCell id="edge3" value="" style="endArrow=classic;html=1;startArrow=classic;startFill=1;" parent="1" source="browser" target="frontend" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge4" value="Web3 call (ethers.js)&lt;br&gt;sign and send tx" style="endArrow=classic;dashed=1;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="frontend" target="metamask" edge="1">
+          <mxGeometry x="0.2926" y="-14" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="365" y="216" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge6" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Submit signed tx&lt;br&gt;(JSON-RPC relay)&lt;/font&gt;" style="endArrow=classic;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;rounded=0;edgeStyle=elbowEdgeStyle;exitX=1;exitY=0;exitDx=0;exitDy=0;endFill=1;" parent="1" source="metamask" target="vS-2TlywlE9YAA-79DWf-5" edge="1">
+          <mxGeometry x="-0.0518" y="20" relative="1" as="geometry">
+            <mxPoint x="630" y="205" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="570" y="160" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge7" value="Confirm or Reject Tx" style="endArrow=classic;dashed=1;html=1;entryX=0.9;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="metamask" target="user" edge="1">
+          <mxGeometry x="0.2131" y="-10" relative="1" as="geometry">
+            <mxPoint x="370" y="50" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="545" y="50" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge8" value="" style="endArrow=classic;dashed=1;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="metamask" target="frontend" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="485" y="350" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="545" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vS-2TlywlE9YAA-79DWf-3" value="Tx status / receipt / error" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="edge8">
+          <mxGeometry x="0.178" y="2" relative="1" as="geometry">
+            <mxPoint x="-21" y="8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vS-2TlywlE9YAA-79DWf-12" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="vS-2TlywlE9YAA-79DWf-5" target="metamask">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="edge2" style="endArrow=classic;html=1;" parent="1" source="browser" target="metamask" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="vS-2TlywlE9YAA-79DWf-13" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;tx receipt /&lt;br&gt;status (JSON-RPC)&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="vS-2TlywlE9YAA-79DWf-12">
+          <mxGeometry x="0.1156" y="-1" relative="1" as="geometry">
+            <mxPoint x="4" y="16" as="offset" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="edge3" style="endArrow=classic;html=1;" parent="1" source="browser" target="frontend" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="edge4" value="sign tx" style="endArrow=classic;dashed=1;html=1;" parent="1" source="frontend" target="metamask" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="edge5" value="call contract" style="endArrow=classic;html=1;" parent="1" source="frontend" target="smartcontracts" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="edge6" value="broadcast tx" style="endArrow=classic;dashed=1;html=1;" parent="1" source="metamask" target="smartcontracts" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="vS-2TlywlE9YAA-79DWf-5" value="&lt;div&gt;Smart Contracts&lt;/div&gt;&lt;div&gt;(Hedera Testnet)&lt;/div&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=default;fontSize=12;spacingTop=3;image=img/lib/ibm/blockchain/smart_contract.svg;" vertex="1" parent="1">
+          <mxGeometry x="720" y="170" width="70" height="70" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
