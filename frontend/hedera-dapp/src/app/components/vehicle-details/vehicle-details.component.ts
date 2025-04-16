@@ -48,21 +48,6 @@ interface Accident {
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-bold">Vehicle Details</h2>
-          <div *ngIf="isOwner" class="flex space-x-2">
-            <button (click)="showAddMaintenance = true" class="btn btn-primary btn-sm">
-              Add Maintenance
-            </button>
-            <button (click)="showAddInsurance = true" class="btn btn-primary btn-sm">
-              Add Insurance
-            </button>
-            <button (click)="showAddAccident = true" class="btn btn-primary btn-sm">
-              Add Accident
-            </button>
-            <button (click)="showResellForm = true" class="btn btn-primary btn-sm">
-              Resell Vehicle
-            </button>
-          </div>
-        </div>
 
         <!-- Basic Vehicle Information -->
         <div class="mb-6">
@@ -102,9 +87,11 @@ interface Accident {
               <h3 class="text-lg font-semibold">Maintenance History</h3>
               <span class="text-sm text-gray-500">({{ vehicleDetails?.maintenanceCount || 0 }} records)</span>
             </div>
-            <button *ngIf="isOwner" 
-                    (click)="showAddMaintenance = true" 
-                    class="btn btn-primary btn-sm">
+            <button (click)="showAddMaintenance = true" 
+                    [disabled]="!(isOwner)"
+                    class="btn btn-primary btn-sm"
+                    [class.opacity-50]="!(isOwner)"
+                    [class.cursor-not-allowed]="!(isOwner)">
               Add Maintenance
             </button>
           </div>
@@ -126,9 +113,11 @@ interface Accident {
               <h3 class="text-lg font-semibold">Insurance History</h3>
               <span class="text-sm text-gray-500">({{ vehicleDetails?.insuranceCount || 0 }} records)</span>
             </div>
-            <button *ngIf="isOwner" 
-                    (click)="showAddInsurance = true" 
-                    class="btn btn-primary btn-sm">
+            <button (click)="showAddInsurance = true" 
+                    [disabled]="!(isOwner)"
+                    class="btn btn-primary btn-sm"
+                    [class.opacity-50]="!(isOwner)"
+                    [class.cursor-not-allowed]="!(isOwner)">
               Add Insurance
             </button>
           </div>
@@ -150,9 +139,11 @@ interface Accident {
               <h3 class="text-lg font-semibold">Accident History</h3>
               <span class="text-sm text-gray-500">({{ vehicleDetails?.accidentCount || 0 }} records)</span>
             </div>
-            <button *ngIf="isOwner" 
-                    (click)="showAddAccident = true" 
-                    class="btn btn-primary btn-sm">
+            <button (click)="showAddAccident = true" 
+                    [disabled]="!(isOwner)"
+                    class="btn btn-primary btn-sm"
+                    [class.opacity-50]="!(isOwner)"
+                    [class.cursor-not-allowed]="!(isOwner)">
               Add Accident
             </button>
           </div>
@@ -171,7 +162,7 @@ interface Accident {
         <div *ngIf="vehicleDetails?.pastOwners?.length" class="mb-6">
           <h3 class="text-lg font-semibold mb-2">Past Owners</h3>
           <div class="space-y-2">
-            <div *ngFor="let owner of vehicleDetails.pastOwners; let i = index" class="border rounded p-2">
+            <div *ngFor="let owner of vehicleDetails?.pastOwners || []; let i = index" class="border rounded p-2">
               <a [routerLink]="['/user/profile']" [queryParams]="{address: owner}"
                  class="text-blue-600 hover:text-blue-800">
                 {{ owner }}
@@ -299,6 +290,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   newAccident = { date: 0, reportDocHash: '', reportDocLink: '' };
   newOwnerAddress = '';
   resellPrice = 0;
+  currentUserAddress: string | null = null;
   private userAddressSubscription: Subscription | null = null;
   private routeSubscription: Subscription | null = null;
 
@@ -333,9 +325,15 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     // Subscribe to wallet connection changes
     this.userAddressSubscription = this.web3Service.userAddress$.subscribe(address => {
       console.log('VehicleDetailsComponent: User address changed:', address);
+      this.currentUserAddress = address;
+      
       if (address && this.vehicleDetails) {
         this.isOwner = address.toLowerCase() === this.vehicleDetails.currentOwner.toLowerCase();
-        console.log('VehicleDetailsComponent: Owner status updated:', { isOwner: this.isOwner, currentOwner: this.vehicleDetails.currentOwner });
+        console.log('VehicleDetailsComponent: Owner status updated:', { 
+          isOwner: this.isOwner, 
+          currentOwner: this.vehicleDetails.currentOwner,
+          userAddress: address
+        });
       }
       
       // Reload vehicle details when user address changes
@@ -371,7 +369,10 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Initialize pastOwnersPrices if not present
+      // Initialize arrays if not present
+      if (!this.vehicleDetails.pastOwners) {
+        this.vehicleDetails.pastOwners = [];
+      }
       if (!this.vehicleDetails.pastOwnersPrices) {
         this.vehicleDetails.pastOwnersPrices = [];
       }
@@ -390,7 +391,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       console.log('VehicleDetailsComponent: Accident history received:', this.accidentHistory);
       
       // Check if current user is owner
-      const address = await this.web3Service.userAddress$.toPromise();
+      const address = this.currentUserAddress;
       console.log('VehicleDetailsComponent: Current user address:', address);
       if (address && this.vehicleDetails) {
         const isOwner = address.toLowerCase() === this.vehicleDetails.currentOwner.toLowerCase();
