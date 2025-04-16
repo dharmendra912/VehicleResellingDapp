@@ -320,11 +320,11 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log('VehicleDetailsComponent: ngOnInit called');
-    
+
     // First check the current route parameters
     const regNo = this.route.snapshot.paramMap.get('regNo');
     console.log('VehicleDetailsComponent: Snapshot regNo:', regNo);
-    
+
     if (regNo) {
       this.loadVehicleDetails(regNo);
     }
@@ -342,16 +342,16 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     this.userAddressSubscription = this.web3Service.userAddress$.subscribe(address => {
       console.log('VehicleDetailsComponent: User address changed:', address);
       this.currentUserAddress = address;
-      
+
       if (address && this.vehicleDetails) {
         this.isOwner = address.toLowerCase() === this.vehicleDetails.currentOwner.toLowerCase();
-        console.log('VehicleDetailsComponent: Owner status updated:', { 
-          isOwner: this.isOwner, 
+        console.log('VehicleDetailsComponent: Owner status updated:', {
+          isOwner: this.isOwner,
           currentOwner: this.vehicleDetails.currentOwner,
           userAddress: address
         });
       }
-      
+
       // Reload vehicle details when user address changes
       const currentRegNo = this.route.snapshot.paramMap.get('regNo');
       if (currentRegNo) {
@@ -374,12 +374,12 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     console.log('VehicleDetailsComponent: Loading vehicle details for:', regNo);
     try {
       this.loadingService.show();
-      
+
       // Load basic vehicle details
       console.log('VehicleDetailsComponent: Fetching basic vehicle details...');
       this.vehicleDetails = await this.vehicleContractService.getVehicleDetails(regNo);
       console.log('VehicleDetailsComponent: Basic details received:', this.vehicleDetails);
-      
+
       if (!this.vehicleDetails) {
         this.dialogService.showError('Vehicle Details', 'Vehicle not found');
         return;
@@ -392,7 +392,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       if (!this.vehicleDetails.pastOwnersPrices) {
         this.vehicleDetails.pastOwnersPrices = [];
       }
-      
+
       // Load history data
       console.log('VehicleDetailsComponent: Fetching maintenance history...');
       this.maintenanceHistory = await this.vehicleContractService.getMaintenanceHistory(regNo);
@@ -405,13 +405,13 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       console.log('VehicleDetailsComponent: Fetching accident history...');
       this.accidentHistory = await this.vehicleContractService.getAccidentHistory(regNo);
       console.log('VehicleDetailsComponent: Accident history received:', this.accidentHistory);
-      
+
       // Check if current user is owner
       const address = this.currentUserAddress;
       console.log('VehicleDetailsComponent: Current user address:', address);
       if (address && this.vehicleDetails) {
         const isOwner = address.toLowerCase() === this.vehicleDetails.currentOwner.toLowerCase();
-        console.log('VehicleDetailsComponent: Owner status check:', { 
+        console.log('VehicleDetailsComponent: Owner status check:', {
           isOwner,
           currentOwner: this.vehicleDetails.currentOwner,
           userAddress: address,
@@ -463,6 +463,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       this.dialogService.showError('Maintenance', 'Failed to add maintenance record');
     } finally {
       this.isLoading = false;
+      this.showAddMaintenance = false;
     }
   }
 
@@ -491,6 +492,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       this.dialogService.showError('Insurance', 'Failed to add insurance record');
     } finally {
       this.isLoading = false;
+      this.showAddInsurance = false;
     }
   }
 
@@ -520,6 +522,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       this.dialogService.showError('Accident', 'Failed to add accident record');
     } finally {
       this.isLoading = false;
+      this.showAddAccident = false;
     }
   }
 
@@ -529,7 +532,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('VehicleDetailsComponent: Reselling vehicle with data:', { 
+    console.log('VehicleDetailsComponent: Reselling vehicle with data:', {
       regNo: this.vehicleDetails.regNo,
       newOwnerAddress: this.newOwnerAddress,
       resellPrice: this.resellPrice
@@ -551,6 +554,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       this.dialogService.showError('Resell', 'Failed to resell vehicle');
     } finally {
       this.isLoading = false;
+      this.showResellForm = false;
     }
   }
 
