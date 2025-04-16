@@ -36,7 +36,7 @@ interface UserProfile {
             <form (ngSubmit)="onSubmit()" class="space-y-8">
               <!-- Name Field -->
               <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-3">Name</label>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-3">Name&nbsp;</label>
                 <input
                   type="text"
                   id="name"
@@ -50,7 +50,7 @@ interface UserProfile {
 
               <!-- Phone Field -->
               <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-3">Phone Number</label>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-3">Phone Number&nbsp;</label>
                 <input
                   type="tel"
                   id="phone"
@@ -64,7 +64,7 @@ interface UserProfile {
 
               <!-- Wallet Address -->
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-3">Wallet Address</label>
+                <label class="block text-sm font-medium text-gray-700 mb-3">Wallet Address&nbsp;</label>
                 <div class="mt-1 flex items-center">
                   <span class="block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-500">
                     {{ profile.walletAddress }}
@@ -136,7 +136,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     // Subscribe to route query params changes
     this.routeSubscription = this.route.queryParams.subscribe(params => {
       const viewAddress = params['address'];
-      
+
       if (viewAddress) {
         // If we have an address in URL, check if it's the current user's address
         this.userAddressSubscription = this.web3Service.userAddress$.subscribe(address => {

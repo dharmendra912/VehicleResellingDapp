@@ -15,7 +15,7 @@ import { UserContractService } from '../../services/user-contract.service';
           <div class="card-body">
             <h5 class="card-title mb-4">Search Users</h5>
             <div class="mb-4">
-              <label for="searchAddress" class="form-label">Wallet Address</label>
+              <label for="searchAddress" class="form-label">Wallet Address&nbsp;</label>
               <div class="input-group">
                 <input
                   id="searchAddress"
@@ -25,9 +25,9 @@ import { UserContractService } from '../../services/user-contract.service';
                   [(ngModel)]="searchAddress"
                   (keyup.enter)="searchUser()"
                 >
-                <button 
-                  class="btn btn-primary px-4" 
-                  type="button" 
+                <button
+                  class="btn btn-primary px-4"
+                  type="button"
                   (click)="searchUser()"
                   [disabled]="!searchAddress || isLoading"
                 >
@@ -103,4 +103,4 @@ export class UserSearchComponent {
       this.isLoading = false;
     }
   }
-} 
+}

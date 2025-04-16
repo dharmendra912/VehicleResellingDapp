@@ -20,7 +20,7 @@ import { DialogService } from '../../services/dialog.service';
 
               <form (ngSubmit)="registerVehicle()" #vehicleForm="ngForm">
                 <div class="mb-3">
-                  <label for="regNo" class="form-label">Registration Number</label>
+                  <label for="regNo" class="form-label">Registration Number&nbsp;</label>
                   <input
                     type="text"
                     class="form-control"
@@ -33,7 +33,7 @@ import { DialogService } from '../../services/dialog.service';
                 </div>
 
                 <div class="mb-3">
-                  <label for="yearOfManufacturing" class="form-label">Year of Manufacturing</label>
+                  <label for="yearOfManufacturing" class="form-label">Year of Manufacturing&nbsp;</label>
                   <input
                     type="number"
                     class="form-control"

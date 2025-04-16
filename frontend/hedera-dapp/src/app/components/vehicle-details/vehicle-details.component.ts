@@ -51,23 +51,6 @@ interface Accident {
           <h2 class="text-2xl font-bold">Vehicle Details</h2>
         </div>
 
-        <!-- Debug Info -->
-        <div class="mb-4 p-4 bg-gray-100 rounded">
-          <h3 class="text-lg font-semibold mb-2">Debug Info</h3>
-          <div class="grid grid-cols-2 gap-2">
-            <div>Is Owner: {{ isOwner }}</div>
-            <div>Current User Address: {{ currentUserAddress }}</div>
-            <div>Vehicle Owner: {{ vehicleDetails?.currentOwner }}</div>
-            <div>Direct Comparison: {{ currentUserAddress?.toLowerCase() === vehicleDetails?.currentOwner?.toLowerCase() }}</div>
-            <div>User Address Length: {{ currentUserAddress?.length }}</div>
-            <div>Owner Address Length: {{ vehicleDetails?.currentOwner?.length }}</div>
-            <div>Vehicle Details Available: {{ !!vehicleDetails }}</div>
-            <div>Maintenance History Count: {{ maintenanceHistory.length }}</div>
-            <div>Insurance History Count: {{ insuranceHistory.length }}</div>
-            <div>Accident History Count: {{ accidentHistory.length }}</div>
-          </div>
-        </div>
-
         <!-- Basic Vehicle Information -->
         <div class="mb-6">
           <div class="flex justify-between items-center mb-4">
@@ -75,11 +58,11 @@ interface Accident {
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Registration Number</label>
+              <label class="block text-sm font-medium text-gray-700">Registration Number&nbsp;</label>
               <p class="mt-1">{{ vehicleDetails?.regNo }}</p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Current Owner</label>
+              <label class="block text-sm font-medium text-gray-700">Current Owner&nbsp;</label>
               <p class="mt-1">
                 <a [routerLink]="['/user/profile']" [queryParams]="{address: vehicleDetails?.currentOwner}"
                    class="text-blue-600 hover:text-blue-800">
@@ -88,7 +71,7 @@ interface Accident {
               </p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Year of Manufacturing</label>
+              <label class="block text-sm font-medium text-gray-700">Year of Manufacturing&nbsp;</label>
               <p class="mt-1">{{ vehicleDetails?.yearOfManufacturing }}</p>
             </div>
           </div>
@@ -200,15 +183,15 @@ interface Accident {
             <h3 class="text-lg font-semibold mb-4">Add Maintenance Record</h3>
             <form (ngSubmit)="addMaintenance()">
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Date</label>
+                <label class="block text-sm font-medium text-gray-700">Date&nbsp;</label>
                 <input type="datetime-local" [(ngModel)]="newMaintenance.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Maintenance Type</label>
+                <label class="block text-sm font-medium text-gray-700">Maintenance Type&nbsp;</label>
                 <input type="text" [(ngModel)]="newMaintenance.maintenanceType" name="maintenanceType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Service Provider</label>
+                <label class="block text-sm font-medium text-gray-700">Service Provider&nbsp;</label>
                 <input type="text" [(ngModel)]="newMaintenance.serviceProvider" name="serviceProvider" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="flex justify-end space-x-2">
@@ -225,15 +208,15 @@ interface Accident {
             <h3 class="text-lg font-semibold mb-4">Add Insurance Record</h3>
             <form (ngSubmit)="addInsurance()">
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Insurance Reference</label>
+                <label class="block text-sm font-medium text-gray-700">Insurance Reference&nbsp;</label>
                 <input type="text" [(ngModel)]="newInsurance.insuranceRef" name="insuranceRef" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Document Hash</label>
+                <label class="block text-sm font-medium text-gray-700">Document Hash&nbsp;</label>
                 <input type="text" [(ngModel)]="newInsurance.docHash" name="docHash" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Document Link</label>
+                <label class="block text-sm font-medium text-gray-700">Document Link&nbsp;</label>
                 <input type="text" [(ngModel)]="newInsurance.docLink" name="docLink" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="flex justify-end space-x-2">
@@ -250,15 +233,15 @@ interface Accident {
             <h3 class="text-lg font-semibold mb-4">Add Accident Record</h3>
             <form (ngSubmit)="addAccident()">
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Date</label>
+                <label class="block text-sm font-medium text-gray-700">Date&nbsp;</label>
                 <input type="datetime-local" [(ngModel)]="newAccident.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Report Document Hash</label>
+                <label class="block text-sm font-medium text-gray-700">Report Document Hash&nbsp;</label>
                 <input type="text" [(ngModel)]="newAccident.reportDocHash" name="reportDocHash" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Report Document Link</label>
+                <label class="block text-sm font-medium text-gray-700">Report Document Link&nbsp;</label>
                 <input type="text" [(ngModel)]="newAccident.reportDocLink" name="reportDocLink" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="flex justify-end space-x-2">
@@ -275,11 +258,11 @@ interface Accident {
             <h3 class="text-lg font-semibold mb-4">Resell Vehicle</h3>
             <form (ngSubmit)="resellVehicle()">
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">New Owner Address</label>
+                <label class="block text-sm font-medium text-gray-700">New Owner Address&nbsp;</label>
                 <input type="text" [(ngModel)]="newOwnerAddress" name="newOwnerAddress" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Price</label>
+                <label class="block text-sm font-medium text-gray-700">Price&nbsp;</label>
                 <input type="number" [(ngModel)]="resellPrice" name="resellPrice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
               </div>
               <div class="flex justify-end space-x-2">

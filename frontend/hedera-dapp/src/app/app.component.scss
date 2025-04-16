@@ -12,3 +12,11 @@
   flex: 1;
   padding: 2rem 0;
 }
+.not-connected-message {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bs-light);
+  min-height: calc(100vh - 60px); // Subtract header height
+}
