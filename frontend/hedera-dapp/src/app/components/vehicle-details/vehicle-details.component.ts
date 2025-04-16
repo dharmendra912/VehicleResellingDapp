@@ -44,253 +44,239 @@ interface Accident {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
-    <div class="min-h-screen bg-gray-100 py-8">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl mx-auto">
-          <!-- Header -->
-          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-1">Vehicle Details</h1>
-            <p class="text-sm text-gray-600">Registration Number: {{ vehicleDetails?.regNo }}</p>
+    <div class="container mx-auto p-4">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold">Vehicle Details</h2>
+          <div *ngIf="isOwner" class="flex space-x-2">
+            <button (click)="showAddMaintenance = true" class="btn btn-primary btn-sm">
+              Add Maintenance
+            </button>
+            <button (click)="showAddInsurance = true" class="btn btn-primary btn-sm">
+              Add Insurance
+            </button>
+            <button (click)="showAddAccident = true" class="btn btn-primary btn-sm">
+              Add Accident
+            </button>
+            <button (click)="showResellForm = true" class="btn btn-primary btn-sm">
+              Resell Vehicle
+            </button>
           </div>
+        </div>
 
-          <!-- Basic Details -->
-          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Registration Number</label>
-                <p class="mt-1 text-sm text-gray-900">{{ vehicleDetails?.regNo }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Year of Manufacturing</label>
-                <p class="mt-1 text-sm text-gray-900">{{ vehicleDetails?.yearOfManufacturing }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Current Owner</label>
-                <a [routerLink]="['/user/profile']" [queryParams]="{address: vehicleDetails?.currentOwner}" 
+        <!-- Basic Vehicle Information -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Basic Information</h3>
+            <div *ngIf="isOwner" class="flex space-x-2">
+              <button (click)="showResellForm = true" class="btn btn-primary btn-sm">
+                Resell Vehicle
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Registration Number</label>
+              <p class="mt-1">{{ vehicleDetails?.regNo }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Current Owner</label>
+              <p class="mt-1">
+                <a [routerLink]="['/user/profile']" [queryParams]="{address: vehicleDetails?.currentOwner}"
                    class="text-blue-600 hover:text-blue-800">
                   {{ vehicleDetails?.currentOwner }}
                 </a>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Number of Past Owners</label>
-                <p class="mt-1 text-sm text-gray-900">{{ vehicleDetails?.pastOwners?.length || 0 }}</p>
-              </div>
+              </p>
             </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Year of Manufacturing</label>
+              <p class="mt-1">{{ vehicleDetails?.yearOfManufacturing }}</p>
+            </div>
+          </div>
+        </div>
 
-            <!-- Past Owners List -->
-            <div *ngIf="vehicleDetails?.pastOwners && vehicleDetails.pastOwners.length > 0" class="mt-4">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Past Owners</label>
-              <div class="space-y-2">
-                <div *ngFor="let owner of vehicleDetails.pastOwners; let i = index" class="border rounded p-2">
-                  <a [routerLink]="['/user/profile']" [queryParams]="{address: owner}"
-                     class="text-blue-600 hover:text-blue-800">
-                    {{ owner }}
-                  </a>
-                  <div class="text-sm text-gray-600 mt-1">
-                    Sold for: {{ vehicleDetails.resellHistory[i] || 'N/A' }}
-                  </div>
-                </div>
+        <!-- Maintenance History -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center space-x-2">
+              <h3 class="text-lg font-semibold">Maintenance History</h3>
+              <span class="text-sm text-gray-500">({{ vehicleDetails?.maintenanceCount || 0 }} records)</span>
+            </div>
+            <button *ngIf="isOwner" 
+                    (click)="showAddMaintenance = true" 
+                    class="btn btn-primary btn-sm">
+              Add Maintenance
+            </button>
+          </div>
+          <div class="space-y-2">
+            <div *ngFor="let record of maintenanceHistory" class="border rounded p-2">
+              <div class="flex justify-between">
+                <span class="font-medium">{{ formatTimestamp(record.date) }}</span>
+                <span class="text-sm text-gray-500">{{ record.maintenanceType }}</span>
+              </div>
+              <p class="text-sm text-gray-600">{{ record.serviceProvider }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insurance History -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center space-x-2">
+              <h3 class="text-lg font-semibold">Insurance History</h3>
+              <span class="text-sm text-gray-500">({{ vehicleDetails?.insuranceCount || 0 }} records)</span>
+            </div>
+            <button *ngIf="isOwner" 
+                    (click)="showAddInsurance = true" 
+                    class="btn btn-primary btn-sm">
+              Add Insurance
+            </button>
+          </div>
+          <div class="space-y-2">
+            <div *ngFor="let record of insuranceHistory" class="border rounded p-2">
+              <div class="flex justify-between">
+                <span class="font-medium">{{ record.insuranceRef }}</span>
+                <a [href]="record.docLink" target="_blank" class="text-blue-600 hover:text-blue-800">View Document</a>
+              </div>
+              <p class="text-sm text-gray-600">{{ record.docHash }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accident History -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center space-x-2">
+              <h3 class="text-lg font-semibold">Accident History</h3>
+              <span class="text-sm text-gray-500">({{ vehicleDetails?.accidentCount || 0 }} records)</span>
+            </div>
+            <button *ngIf="isOwner" 
+                    (click)="showAddAccident = true" 
+                    class="btn btn-primary btn-sm">
+              Add Accident
+            </button>
+          </div>
+          <div class="space-y-2">
+            <div *ngFor="let record of accidentHistory" class="border rounded p-2">
+              <div class="flex justify-between">
+                <span class="font-medium">{{ formatTimestamp(record.date) }}</span>
+                <a [href]="record.reportDocLink" target="_blank" class="text-blue-600 hover:text-blue-800">View Report</a>
+              </div>
+              <p class="text-sm text-gray-600">{{ record.reportDocHash }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Owners List -->
+        <div *ngIf="vehicleDetails?.pastOwners?.length" class="mb-6">
+          <h3 class="text-lg font-semibold mb-2">Past Owners</h3>
+          <div class="space-y-2">
+            <div *ngFor="let owner of vehicleDetails.pastOwners; let i = index" class="border rounded p-2">
+              <a [routerLink]="['/user/profile']" [queryParams]="{address: owner}"
+                 class="text-blue-600 hover:text-blue-800">
+                {{ owner }}
+              </a>
+              <div class="text-sm text-gray-600 mt-1">
+                Sold for: {{ vehicleDetails?.resellHistory?.[i] || 'N/A' }}
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Maintenance History -->
-          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-semibold text-gray-900">Maintenance History</h2>
-              <button *ngIf="isOwner" 
-                      (click)="showAddMaintenance = true"
-                      class="btn btn-primary btn-sm">
-                Add Maintenance
-              </button>
+      <!-- Add Maintenance Form -->
+      <div *ngIf="showAddMaintenance" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+          <h3 class="text-lg font-semibold mb-4">Add Maintenance Record</h3>
+          <form (ngSubmit)="addMaintenance()">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Date</label>
+              <input type="datetime-local" [(ngModel)]="newMaintenance.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             </div>
-            
-            <!-- Add Maintenance Form -->
-            <div *ngIf="showAddMaintenance" class="mb-4 p-4 border rounded-lg">
-              <form (ngSubmit)="addMaintenance()" class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
-                  <input type="datetime-local" [(ngModel)]="newMaintenance.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Maintenance Type</label>
-                  <input type="text" [(ngModel)]="newMaintenance.maintenanceType" name="maintenanceType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Service Provider</label>
-                  <input type="text" [(ngModel)]="newMaintenance.serviceProvider" name="serviceProvider" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div class="flex justify-end space-x-2">
-                  <button type="button" (click)="showAddMaintenance = false" class="btn btn-outline-secondary btn-sm">Cancel</button>
-                  <button type="submit" [disabled]="isLoading" class="btn btn-primary btn-sm">
-                    {{ isLoading ? 'Adding...' : 'Add Maintenance' }}
-                  </button>
-                </div>
-              </form>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Maintenance Type</label>
+              <input type="text" [(ngModel)]="newMaintenance.maintenanceType" name="maintenanceType" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Service Provider</label>
+              <input type="text" [(ngModel)]="newMaintenance.serviceProvider" name="serviceProvider" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            </div>
+            <div class="flex justify-end space-x-2">
+              <button type="button" (click)="showAddMaintenance = false" class="btn btn-secondary">Cancel</button>
+              <button type="submit" class="btn btn-primary">Add Record</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-            <!-- Maintenance List -->
-            <div *ngIf="maintenanceHistory.length > 0" class="space-y-4">
-              <div *ngFor="let maintenance of maintenanceHistory" class="border rounded-lg p-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ formatTimestamp(maintenance.date) }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Type</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ maintenance.maintenanceType }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Service Provider</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ maintenance.serviceProvider }}</p>
-                  </div>
-                </div>
-              </div>
+      <!-- Add Insurance Form -->
+      <div *ngIf="showAddInsurance" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+          <h3 class="text-lg font-semibold mb-4">Add Insurance Record</h3>
+          <form (ngSubmit)="addInsurance()">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Insurance Reference</label>
+              <input type="text" [(ngModel)]="newInsurance.insuranceRef" name="insuranceRef" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             </div>
-            <div *ngIf="maintenanceHistory.length === 0" class="text-center py-4 text-gray-500">
-              No maintenance records found
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Document Hash</label>
+              <input type="text" [(ngModel)]="newInsurance.docHash" name="docHash" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             </div>
-          </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Document Link</label>
+              <input type="text" [(ngModel)]="newInsurance.docLink" name="docLink" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            </div>
+            <div class="flex justify-end space-x-2">
+              <button type="button" (click)="showAddInsurance = false" class="btn btn-secondary">Cancel</button>
+              <button type="submit" class="btn btn-primary">Add Record</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-          <!-- Insurance History -->
-          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-semibold text-gray-900">Insurance History</h2>
-              <button *ngIf="isOwner" 
-                      (click)="showAddInsurance = true"
-                      class="btn btn-primary btn-sm">
-                Add Insurance
-              </button>
+      <!-- Add Accident Form -->
+      <div *ngIf="showAddAccident" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+          <h3 class="text-lg font-semibold mb-4">Add Accident Record</h3>
+          <form (ngSubmit)="addAccident()">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Date</label>
+              <input type="datetime-local" [(ngModel)]="newAccident.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Report Document Hash</label>
+              <input type="text" [(ngModel)]="newAccident.reportDocHash" name="reportDocHash" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Report Document Link</label>
+              <input type="text" [(ngModel)]="newAccident.reportDocLink" name="reportDocLink" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            </div>
+            <div class="flex justify-end space-x-2">
+              <button type="button" (click)="showAddAccident = false" class="btn btn-secondary">Cancel</button>
+              <button type="submit" class="btn btn-primary">Add Record</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-            <!-- Add Insurance Form -->
-            <div *ngIf="showAddInsurance" class="mb-4 p-4 border rounded-lg">
-              <form (ngSubmit)="addInsurance()" class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Insurance Reference</label>
-                  <input type="text" [(ngModel)]="newInsurance.insuranceRef" name="insuranceRef" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Document Hash</label>
-                  <input type="text" [(ngModel)]="newInsurance.docHash" name="docHash" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Document Link</label>
-                  <input type="text" [(ngModel)]="newInsurance.docLink" name="docLink" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div class="flex justify-end space-x-2">
-                  <button type="button" (click)="showAddInsurance = false" class="btn btn-outline-secondary btn-sm">Cancel</button>
-                  <button type="submit" [disabled]="isLoading" class="btn btn-primary btn-sm">
-                    {{ isLoading ? 'Adding...' : 'Add Insurance' }}
-                  </button>
-                </div>
-              </form>
+      <!-- Resell Vehicle Form -->
+      <div *ngIf="showResellForm" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+          <h3 class="text-lg font-semibold mb-4">Resell Vehicle</h3>
+          <form (ngSubmit)="resellVehicle()">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">New Owner Address</label>
+              <input type="text" [(ngModel)]="newOwnerAddress" name="newOwnerAddress" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             </div>
-
-            <!-- Insurance List -->
-            <div *ngIf="insuranceHistory.length > 0" class="space-y-4">
-              <div *ngFor="let insurance of insuranceHistory" class="border rounded-lg p-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Reference</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ insurance.insuranceRef }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Document Hash</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ insurance.docHash }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Document Link</label>
-                    <a [href]="insurance.docLink" target="_blank" class="text-blue-600 hover:text-blue-800">View Document</a>
-                  </div>
-                </div>
-              </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Price</label>
+              <input type="number" [(ngModel)]="resellPrice" name="resellPrice" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             </div>
-            <div *ngIf="insuranceHistory.length === 0" class="text-center py-4 text-gray-500">
-              No insurance records found
+            <div class="flex justify-end space-x-2">
+              <button type="button" (click)="showResellForm = false" class="btn btn-secondary">Cancel</button>
+              <button type="submit" class="btn btn-primary">Resell Vehicle</button>
             </div>
-          </div>
-
-          <!-- Accident History -->
-          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-semibold text-gray-900">Accident History</h2>
-              <button *ngIf="isOwner" 
-                      (click)="showAddAccident = true"
-                      class="btn btn-primary btn-sm">
-                Add Accident
-              </button>
-            </div>
-
-            <!-- Add Accident Form -->
-            <div *ngIf="showAddAccident" class="mb-4 p-4 border rounded-lg">
-              <form (ngSubmit)="addAccident()" class="space-y-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
-                  <input type="datetime-local" [(ngModel)]="newAccident.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Report Document Hash</label>
-                  <input type="text" [(ngModel)]="newAccident.reportDocHash" name="reportDocHash" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Report Document Link</label>
-                  <input type="text" [(ngModel)]="newAccident.reportDocLink" name="reportDocLink" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-                </div>
-                <div class="flex justify-end space-x-2">
-                  <button type="button" (click)="showAddAccident = false" class="btn btn-outline-secondary btn-sm">Cancel</button>
-                  <button type="submit" [disabled]="isLoading" class="btn btn-primary btn-sm">
-                    {{ isLoading ? 'Adding...' : 'Add Accident' }}
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            <!-- Accident List -->
-            <div *ngIf="accidentHistory.length > 0" class="space-y-4">
-              <div *ngFor="let accident of accidentHistory" class="border rounded-lg p-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ formatTimestamp(accident.date) }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Report Document Hash</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ accident.reportDocHash }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Report Document Link</label>
-                    <a [href]="accident.reportDocLink" target="_blank" class="text-blue-600 hover:text-blue-800">View Report</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div *ngIf="accidentHistory.length === 0" class="text-center py-4 text-gray-500">
-              No accident records found
-            </div>
-          </div>
-
-          <!-- Resell Vehicle -->
-          <div *ngIf="isOwner" class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Resell Vehicle</h2>
-            <form (ngSubmit)="resellVehicle()" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700">New Owner Address</label>
-                <input type="text" [(ngModel)]="newOwnerAddress" name="newOwnerAddress" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Resell Amount (in ETH)</label>
-                <input type="number" [(ngModel)]="resellAmount" name="resellAmount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
-              </div>
-              <div class="flex justify-end">
-                <button type="submit" [disabled]="isLoading" class="btn btn-primary">
-                  {{ isLoading ? 'Processing...' : 'Resell Vehicle' }}
-                </button>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -307,11 +293,12 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   showAddMaintenance = false;
   showAddInsurance = false;
   showAddAccident = false;
+  showResellForm = false;
   newMaintenance = { date: 0, maintenanceType: '', serviceProvider: '' };
   newInsurance = { insuranceRef: '', docHash: '', docLink: '' };
   newAccident = { date: 0, reportDocHash: '', reportDocLink: '' };
   newOwnerAddress = '';
-  resellAmount = 0;
+  resellPrice = 0;
   private userAddressSubscription: Subscription | null = null;
   private routeSubscription: Subscription | null = null;
 
@@ -406,12 +393,18 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       const address = await this.web3Service.userAddress$.toPromise();
       console.log('VehicleDetailsComponent: Current user address:', address);
       if (address && this.vehicleDetails) {
-        this.isOwner = address.toLowerCase() === this.vehicleDetails.currentOwner.toLowerCase();
-        console.log('VehicleDetailsComponent: Owner status set:', { 
-          isOwner: this.isOwner, 
+        const isOwner = address.toLowerCase() === this.vehicleDetails.currentOwner.toLowerCase();
+        console.log('VehicleDetailsComponent: Owner status check:', { 
+          isOwner,
           currentOwner: this.vehicleDetails.currentOwner,
-          userAddress: address 
+          userAddress: address,
+          currentOwnerLower: this.vehicleDetails.currentOwner.toLowerCase(),
+          userAddressLower: address.toLowerCase()
         });
+        this.isOwner = isOwner;
+      } else {
+        console.log('VehicleDetailsComponent: Owner status not set - missing address or vehicle details');
+        this.isOwner = false;
       }
     } catch (error) {
       console.error('VehicleDetailsComponent: Error loading vehicle details:', error);
@@ -522,19 +515,19 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     console.log('VehicleDetailsComponent: Reselling vehicle with data:', { 
       regNo: this.vehicleDetails.regNo,
       newOwnerAddress: this.newOwnerAddress,
-      resellAmount: this.resellAmount
+      resellPrice: this.resellPrice
     });
     try {
       this.isLoading = true;
       await this.vehicleContractService.resaleVehicle(
         this.vehicleDetails.regNo,
         this.newOwnerAddress,
-        this.resellAmount
+        this.resellPrice
       );
       console.log('VehicleDetailsComponent: Vehicle resold successfully');
       this.dialogService.showSuccess('Resell', 'Vehicle resold successfully');
       this.newOwnerAddress = '';
-      this.resellAmount = 0;
+      this.resellPrice = 0;
       await this.loadVehicleDetails(this.vehicleDetails.regNo);
     } catch (error) {
       console.error('VehicleDetailsComponent: Error reselling vehicle:', error);
