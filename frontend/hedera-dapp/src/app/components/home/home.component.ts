@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
       <div class="bg-gradient-to-r from-blue-600 to-blue-800">
           <div class="container mx-auto px-4 py-16">
               <div class="max-w-3xl mx-auto text-center">
-                  <h1 class="text-4xl md:text-5xl font-bold mb-6">Vehicle Lifecycle Platform</h1>
+                  <h1 class="text-4xl md:text-5xl font-bold mb-6">AutoTrust - A Vehicle Lifecycle Platform</h1>
                   <div class="flex flex-col sm:flex-row gap-4 justify-center">
                       <a routerLink="/vehicle/register"
                          class="text-blue-600 hover:bg-blue-50 font-bold py-3 px-6 rounded-lg transition duration-300">

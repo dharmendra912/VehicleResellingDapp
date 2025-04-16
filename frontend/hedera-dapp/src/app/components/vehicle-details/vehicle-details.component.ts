@@ -12,11 +12,13 @@ interface VehicleDetails {
   regNo: string;
   currentOwner: string;
   pastOwners: string[];
+  pastOwnersPrices: string[];
   yearOfManufacturing: number;
   maintenanceCount: number;
   insuranceCount: number;
   accidentCount: number;
   resellCount: number;
+  resellHistory: number[];
 }
 
 interface Maintenance {
@@ -65,11 +67,30 @@ interface Accident {
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700">Current Owner</label>
-                <p class="mt-1 text-sm text-gray-900">{{ vehicleDetails?.currentOwner }}</p>
+                <a [routerLink]="['/user/profile']" [queryParams]="{address: vehicleDetails?.currentOwner}" 
+                   class="text-blue-600 hover:text-blue-800">
+                  {{ vehicleDetails?.currentOwner }}
+                </a>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700">Number of Past Owners</label>
-                <p class="mt-1 text-sm text-gray-900">{{ vehicleDetails?.pastOwners?.length }}</p>
+                <p class="mt-1 text-sm text-gray-900">{{ vehicleDetails?.pastOwners?.length || 0 }}</p>
+              </div>
+            </div>
+
+            <!-- Past Owners List -->
+            <div *ngIf="vehicleDetails?.pastOwners && vehicleDetails.pastOwners.length > 0" class="mt-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Past Owners</label>
+              <div class="space-y-2">
+                <div *ngFor="let owner of vehicleDetails.pastOwners; let i = index" class="border rounded p-2">
+                  <a [routerLink]="['/user/profile']" [queryParams]="{address: owner}"
+                     class="text-blue-600 hover:text-blue-800">
+                    {{ owner }}
+                  </a>
+                  <div class="text-sm text-gray-600 mt-1">
+                    Sold for: {{ vehicleDetails.resellHistory[i] || 'N/A' }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -89,8 +110,8 @@ interface Accident {
             <div *ngIf="showAddMaintenance" class="mb-4 p-4 border rounded-lg">
               <form (ngSubmit)="addMaintenance()" class="space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700">Date</label>
-                  <input type="date" [(ngModel)]="newMaintenance.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                  <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
+                  <input type="datetime-local" [(ngModel)]="newMaintenance.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700">Maintenance Type</label>
@@ -114,8 +135,8 @@ interface Accident {
               <div *ngFor="let maintenance of maintenanceHistory" class="border rounded-lg p-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-700">Date</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ maintenance.date | date }}</p>
+                    <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ formatTimestamp(maintenance.date) }}</p>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700">Type</label>
@@ -207,8 +228,8 @@ interface Accident {
             <div *ngIf="showAddAccident" class="mb-4 p-4 border rounded-lg">
               <form (ngSubmit)="addAccident()" class="space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700">Date</label>
-                  <input type="date" [(ngModel)]="newAccident.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                  <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
+                  <input type="datetime-local" [(ngModel)]="newAccident.date" name="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700">Report Document Hash</label>
@@ -232,8 +253,8 @@ interface Accident {
               <div *ngFor="let accident of accidentHistory" class="border rounded-lg p-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-700">Date</label>
-                    <p class="mt-1 text-sm text-gray-900">{{ accident.date | date }}</p>
+                    <label class="block text-sm font-medium text-gray-700">Date (UTC)</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ formatTimestamp(accident.date) }}</p>
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700">Report Document Hash</label>
@@ -362,6 +383,11 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
         this.dialogService.showError('Vehicle Details', 'Vehicle not found');
         return;
       }
+
+      // Initialize pastOwnersPrices if not present
+      if (!this.vehicleDetails.pastOwnersPrices) {
+        this.vehicleDetails.pastOwnersPrices = [];
+      }
       
       // Load history data
       console.log('VehicleDetailsComponent: Fetching maintenance history...');
@@ -381,7 +407,11 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
       console.log('VehicleDetailsComponent: Current user address:', address);
       if (address && this.vehicleDetails) {
         this.isOwner = address.toLowerCase() === this.vehicleDetails.currentOwner.toLowerCase();
-        console.log('VehicleDetailsComponent: Owner status set:', { isOwner: this.isOwner, currentOwner: this.vehicleDetails.currentOwner });
+        console.log('VehicleDetailsComponent: Owner status set:', { 
+          isOwner: this.isOwner, 
+          currentOwner: this.vehicleDetails.currentOwner,
+          userAddress: address 
+        });
       }
     } catch (error) {
       console.error('VehicleDetailsComponent: Error loading vehicle details:', error);
@@ -389,6 +419,12 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     } finally {
       this.loadingService.hide();
     }
+  }
+
+  formatTimestamp(timestamp: number): string {
+    if (!timestamp) return 'N/A';
+    const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+    return date.toUTCString();
   }
 
   async addMaintenance() {
@@ -400,9 +436,10 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     console.log('VehicleDetailsComponent: Adding maintenance with data:', this.newMaintenance);
     try {
       this.isLoading = true;
+      const timestamp = Math.floor(new Date(this.newMaintenance.date).getTime() / 1000); // Convert to UTC timestamp
       await this.vehicleContractService.addMaintenance(
         this.vehicleDetails.regNo,
-        new Date(this.newMaintenance.date).getTime() / 1000,
+        timestamp,
         this.newMaintenance.maintenanceType,
         this.newMaintenance.serviceProvider
       );
@@ -456,9 +493,10 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     console.log('VehicleDetailsComponent: Adding accident with data:', this.newAccident);
     try {
       this.isLoading = true;
+      const timestamp = Math.floor(new Date(this.newAccident.date).getTime() / 1000); // Convert to UTC timestamp
       await this.vehicleContractService.addAccident(
         this.vehicleDetails.regNo,
-        new Date(this.newAccident.date).getTime() / 1000,
+        timestamp,
         this.newAccident.reportDocHash,
         this.newAccident.reportDocLink
       );

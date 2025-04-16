@@ -27,11 +27,13 @@ interface VehicleDetails {
   regNo: string;
   currentOwner: string;
   pastOwners: string[];
+  pastOwnersPrices: string[];
   yearOfManufacturing: number;
   maintenanceCount: number;
   insuranceCount: number;
   accidentCount: number;
   resellCount: number;
+  resellHistory: number[];
 }
 
 @Injectable({
@@ -170,6 +172,7 @@ export class VehicleContractService {
         regNo_,
         currentOwner,
         pastOwners,
+        pastOwnersPrices,
         yearOfManufacturing,
         maintenanceCount,
         insuranceCount,
@@ -177,26 +180,35 @@ export class VehicleContractService {
         resellCount
       ] = await contract['getVehicleDetails'](regNo);
       
+      // Get resell history
+      console.log('VehicleContractService: Getting resell history...');
+      const resellHistory = await contract['getResellHistory'](regNo);
+      console.log('VehicleContractService: Resell history received:', resellHistory);
+      
       console.log('VehicleContractService: Raw response from getVehicleDetails:', {
         regNo: regNo_,
         currentOwner,
         pastOwners,
+        pastOwnersPrices,
         yearOfManufacturing,
         maintenanceCount,
         insuranceCount,
         accidentCount,
-        resellCount
+        resellCount,
+        resellHistory
       });
       
       return {
         regNo: regNo_,
         currentOwner,
         pastOwners,
+        pastOwnersPrices,
         yearOfManufacturing,
         maintenanceCount,
         insuranceCount,
         accidentCount,
-        resellCount
+        resellCount,
+        resellHistory
       };
     } catch (error) {
       console.error('VehicleContractService: Error in getVehicleDetails:', error);
