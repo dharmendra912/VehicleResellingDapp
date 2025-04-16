@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Web3Service } from '../../services/web3.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-header',
@@ -30,16 +31,23 @@ import { Web3Service } from '../../services/web3.service';
               <span class="small">Updating...</span>
             </div>
             <div *ngIf="web3Service.isMetaMaskAvailable$ | async; else noMetaMask" class="d-flex align-items-center gap-2">
-              <span class="text-muted small">
-                Connected: {{ (web3Service.userAddress$ | async)?.slice(0, 6) }}...{{ (web3Service.userAddress$ | async)?.slice(-4) }}
-              </span>
-              <a 
-                [routerLink]="['/user/profile']" 
-                [queryParams]="{ address: web3Service.userAddress$ | async }"
-                class="btn btn-outline-primary btn-sm"
-              >
-                My Profile
-              </a>
+              <div *ngIf="web3Service.userAddress$ | async as address; else notConnected">
+                <span class="text-muted small">
+                  Connected: {{ address }}
+                </span>
+                <a 
+                  [routerLink]="['/user/profile']" 
+                  [queryParams]="{ address: address }"
+                  class="btn btn-outline-primary btn-sm ms-2"
+                >
+                  My Profile
+                </a>
+              </div>
+              <ng-template #notConnected>
+                <button class="btn btn-primary btn-sm" (click)="connectWallet()">
+                  Connect Wallet
+                </button>
+              </ng-template>
             </div>
             <ng-template #noMetaMask>
               <div class="text-danger small">
@@ -65,5 +73,19 @@ import { Web3Service } from '../../services/web3.service';
   `]
 })
 export class HeaderComponent {
-  constructor(public web3Service: Web3Service) {}
+  constructor(
+    public web3Service: Web3Service,
+    private dialogService: DialogService
+  ) {}
+
+  async connectWallet() {
+    try {
+      await this.web3Service.connectWallet();
+    } catch (error) {
+      this.dialogService.showError(
+        'Wallet Connection Error',
+        error instanceof Error ? error.message : 'Failed to connect wallet. Please try again.'
+      );
+    }
+  }
 }

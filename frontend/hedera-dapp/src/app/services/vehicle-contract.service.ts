@@ -21,13 +21,13 @@ export class VehicleContractService {
     if (!this.vehicleContract) {
       const provider = await this.web3Service.getProvider();
       if (!provider) throw new Error('Provider not initialized');
-      
+
       this.vehicleContract = new ethers.Contract(
         VEHICLE_LEDGER_CONTRACT_ADDRESS,
         VEHICLE_LEDGER_ABI,
         provider
       );
-      
+
       const signer = await this.web3Service.getSigner();
       if (signer) {
         this.vehicleContract = this.vehicleContract.connect(signer);
@@ -60,17 +60,8 @@ export class VehicleContractService {
       const [
         owner,
         yearOfManufacturing,
-        make,
-        model,
-        color,
-        engineNo,
-        chassisNo,
-        fuelType,
-        transmission,
-        seatingCapacity,
-        status
       ] = await contract['getVehicleDetails'](regNo);
-      
+
       return {
         regNo,
         currentOwner: owner,
@@ -82,7 +73,7 @@ export class VehicleContractService {
         resellCount: 0
       };
     } catch (error) {
-      this.handleError(error, 'Get Vehicle Details');
+      console.error('Get Vehicle Details error:', error);
       return null;
     } finally {
       this.loadingService.hide();
@@ -228,10 +219,34 @@ export class VehicleContractService {
   }
 
   private handleError(error: any, operation: string) {
+    if (error.code === 'CALL_EXCEPTION' &&
+        (error.reason === 'Vehicle not found' ||
+         error.reason === 'User not found' ||
+         error.reason === 'Not authorized')) {
+      return;
+    }
+
     console.error(`${operation} error:`, error);
-    this.dialogService.showError(
-      operation,
-      error.message || 'An error occurred'
-    );
+
+    let errorMessage = 'An error occurred';
+
+    if (error.code === 'CALL_EXCEPTION') {
+      const revertReason = error.reason || error.errorArgs?.[0] || 'Unknown reason';
+      errorMessage = `Contract reverted: ${revertReason}`;
+    }
+    else if (error.code === 4001 || error.code === 'ACTION_REJECTED') {
+      errorMessage = 'Transaction was rejected by user';
+    }
+    else if (error.code === 'NETWORK_ERROR' || error.code === 'NETWORK_ERROR') {
+      errorMessage = 'Network error. Please check your connection';
+    }
+    else if (error.code === 'INSUFFICIENT_FUNDS') {
+      errorMessage = 'Insufficient funds for transaction';
+    }
+    else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    this.dialogService.showError(operation, errorMessage);
   }
-} 
+}

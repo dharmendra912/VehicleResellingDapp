@@ -26,7 +26,7 @@ import { Subscription } from 'rxjs';
 
               <div *ngIf="!isLoading && !error && vehicle" class="vehicle-details">
                 <h5 class="card-title mb-4">Vehicle Details</h5>
-                
+
                 <div class="mb-4">
                   <h6 class="text-muted mb-3">Basic Information</h6>
                   <div class="row">
@@ -35,9 +35,9 @@ import { Subscription } from 'rxjs';
                       <p><strong>Year of Manufacturing:</strong> {{ vehicle.yearOfManufacturing }}</p>
                     </div>
                     <div class="col-md-6">
-                      <p><strong>Current Owner:</strong> 
+                      <p><strong>Current Owner:</strong>
                         <a [routerLink]="['/user/profile']" [queryParams]="{ address: vehicle.currentOwner }" class="text-decoration-none">
-                          {{ vehicle.currentOwner | slice:0:6 }}...{{ vehicle.currentOwner | slice:-4 }}
+                          {{ vehicle.currentOwner }}
                         </a>
                       </p>
                     </div>
@@ -143,7 +143,7 @@ import { Subscription } from 'rxjs';
                         <tr *ngFor="let owner of pastOwners">
                           <td>
                             <a [routerLink]="['/user/profile']" [queryParams]="{ address: owner }" class="text-decoration-none">
-                              {{ owner | slice:0:6 }}...{{ owner | slice:-4 }}
+                              {{ owner }}
                             </a>
                           </td>
                         </tr>
@@ -223,23 +223,32 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
     try {
       this.isLoading = true;
       this.error = null;
+      this.vehicle = null;
+      this.maintenanceHistory = [];
+      this.insuranceHistory = [];
+      this.accidentHistory = [];
+      this.pastOwners = [];
+      this.resellHistory = [];
 
       const details = await this.vehicleContractService.getVehicleDetails(regNo);
-      if (details) {
-        this.vehicle = details;
-        
-        // Load all histories
-        this.maintenanceHistory = await this.vehicleContractService.getMaintenanceHistory(regNo);
-        this.insuranceHistory = await this.vehicleContractService.getInsuranceHistory(regNo);
-        this.accidentHistory = await this.vehicleContractService.getAccidentHistory(regNo);
-        this.pastOwners = await this.vehicleContractService.getPastOwnerHistory(regNo);
-        this.resellHistory = await this.vehicleContractService.getResellHistory(regNo);
+      if (!details) {
+        this.error = 'Vehicle not found';
+        return;
       }
+
+      this.vehicle = details;
+
+      // Load all histories
+      this.maintenanceHistory = await this.vehicleContractService.getMaintenanceHistory(regNo);
+      this.insuranceHistory = await this.vehicleContractService.getInsuranceHistory(regNo);
+      this.accidentHistory = await this.vehicleContractService.getAccidentHistory(regNo);
+      this.pastOwners = await this.vehicleContractService.getPastOwnerHistory(regNo);
+      this.resellHistory = await this.vehicleContractService.getResellHistory(regNo);
     } catch (error) {
-      this.error = 'Failed to load vehicle details';
       console.error('Error loading vehicle details:', error);
+      this.error = 'Failed to load vehicle details';
     } finally {
       this.isLoading = false;
     }
   }
-} 
+}

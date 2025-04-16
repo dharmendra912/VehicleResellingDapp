@@ -107,7 +107,13 @@ export class Web3Service {
         USER_PROFILE_ABI,
         provider
       );
-      const [name, phone, vehicles] = await contract['getUserProfile'](address);
+      
+      const [name, phone, vehicles] = await Promise.all([
+        contract['getUserName'](address),
+        contract['getUserPhone'](address),
+        contract['getUserVehicles'](address)
+      ]);
+      
       return { name, phone, vehicles };
     } catch (error) {
       console.error('Error getting user profile:', error);
