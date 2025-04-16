@@ -1,8 +1,7 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ethers } from 'ethers';
-import { USER_PROFILE_ABI, USER_PROFILE_CONTRACT_ADDRESS } from '../ABIs/UserProfile.abi';
 
 declare global {
   interface Window {
@@ -20,18 +19,16 @@ declare global {
   providedIn: 'root'
 })
 export class Web3Service {
+  private isBrowser = typeof window !== 'undefined';
+  private loadingSubject = new BehaviorSubject<boolean>(false);
   private isMetaMaskAvailableSubject = new BehaviorSubject<boolean>(false);
   private userAddressSubject = new BehaviorSubject<string | null>(null);
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  private provider: ethers.providers.Web3Provider | null = null;
-  private readonly isBrowser: boolean;
-
+  
+  loading$ = this.loadingSubject.asObservable();
   isMetaMaskAvailable$ = this.isMetaMaskAvailableSubject.asObservable();
   userAddress$ = this.userAddressSubject.asObservable();
-  loading$ = this.loadingSubject.asObservable();
 
   constructor() {
-    this.isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
     if (this.isBrowser) {
       this.checkMetaMaskAvailability();
       this.setupEventListeners();
@@ -46,7 +43,7 @@ export class Web3Service {
 
   private setupEventListeners() {
     if (!this.isBrowser || !window.ethereum) return;
-    
+
     window.ethereum.on('accountsChanged', (accounts: string[]) => {
       this.userAddressSubject.next(accounts[0] || null);
     });
@@ -57,12 +54,15 @@ export class Web3Service {
   }
 
   async connectWallet(): Promise<string> {
-    if (!this.isBrowser || !window.ethereum) {
-      throw new Error('MetaMask is not installed');
+    if (!this.isBrowser) {
+      throw new Error('Web3 is only available in browser environment');
     }
 
     try {
       this.loadingSubject.next(true);
+      if (!window.ethereum) {
+        throw new Error('MetaMask is not installed');
+      }
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const address = accounts[0];
       this.userAddressSubject.next(address);
@@ -75,26 +75,27 @@ export class Web3Service {
     }
   }
 
-  async getProvider(): Promise<ethers.providers.Web3Provider> {
+  async getProvider() {
     if (!this.isBrowser) {
       throw new Error('Web3 is only available in browser environment');
     }
 
-    if (!this.provider) {
+    try {
+      this.loadingSubject.next(true);
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed');
       }
-      this.provider = new ethers.providers.Web3Provider(window.ethereum);
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      return new ethers.providers.Web3Provider(window.ethereum);
+    } catch (error) {
+      console.error('Error getting provider:', error);
+      throw error;
+    } finally {
+      this.loadingSubject.next(false);
     }
-    return this.provider;
   }
 
-  async getSigner(): Promise<ethers.Signer> {
-    const provider = await this.getProvider();
-    return provider.getSigner();
-  }
-
-  async getUserProfile(address: string) {
+  async getSigner() {
     if (!this.isBrowser) {
       throw new Error('Web3 is only available in browser environment');
     }
@@ -102,44 +103,9 @@ export class Web3Service {
     try {
       this.loadingSubject.next(true);
       const provider = await this.getProvider();
-      const contract = new ethers.Contract(
-        USER_PROFILE_CONTRACT_ADDRESS,
-        USER_PROFILE_ABI,
-        provider
-      );
-      
-      const [name, phone, vehicles] = await Promise.all([
-        contract['getUserName'](address),
-        contract['getUserPhone'](address),
-        contract['getUserVehicles'](address)
-      ]);
-      
-      return { name, phone, vehicles };
+      return provider.getSigner();
     } catch (error) {
-      console.error('Error getting user profile:', error);
-      throw error;
-    } finally {
-      this.loadingSubject.next(false);
-    }
-  }
-
-  async updateUserProfile(name: string, phone: string) {
-    if (!this.isBrowser) {
-      throw new Error('Web3 is only available in browser environment');
-    }
-
-    try {
-      this.loadingSubject.next(true);
-      const signer = await this.getSigner();
-      const contract = new ethers.Contract(
-        USER_PROFILE_CONTRACT_ADDRESS,
-        USER_PROFILE_ABI,
-        signer
-      );
-      const tx = await contract['updateUserProfile'](name, phone);
-      await tx.wait();
-    } catch (error) {
-      console.error('Error updating user profile:', error);
+      console.error('Error getting signer:', error);
       throw error;
     } finally {
       this.loadingSubject.next(false);

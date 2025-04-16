@@ -3,9 +3,8 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute, Router, RouterModule} from '@angular/router';
 import {Web3Service} from '../../services/web3.service';
+import {UserContractService} from '../../services/user-contract.service';
 import {Subscription} from 'rxjs';
-import {ethers} from 'ethers';
-import {USER_PROFILE_ABI, USER_PROFILE_CONTRACT_ADDRESS} from '../../ABIs/UserProfile.abi';
 
 @Component({
   selector: 'app-user-profile',
@@ -31,14 +30,15 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private web3Service: Web3Service
+    private web3Service: Web3Service,
+    private userContractService: UserContractService
   ) {
   }
 
   ngOnInit() {
     console.log("User Profile");
     this.metaMaskSubscription = this.web3Service.isMetaMaskAvailable$.subscribe(
-      isAvailable => {
+      (isAvailable: boolean) => {
         this.isMetaMaskAvailable = isAvailable;
       }
     );
@@ -52,7 +52,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.loadUserProfile(address);
       } else {
         this.userAddressSubscription = this.web3Service.userAddress$.subscribe(
-          userAddress => {
+          (userAddress: string | null) => {
             if (userAddress) {
               this.address = userAddress;
               this.isEditable = true;
@@ -88,7 +88,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         console.log("wallet is connected")
       }
 
-      const profile = await this.web3Service.getUserProfile(address);
+      const profile = await this.userContractService.getUserProfile(address);
       console.log('Profile loaded:', profile);
 
       if (profile) {
@@ -100,7 +100,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error loading user profile:', error);
-      // You might want to show this error to the user
       throw error;
     } finally {
       this.isLoading = false;
@@ -118,24 +117,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         throw new Error('Please connect your wallet first');
       }
 
-      // Get the signer
-      const signer = await this.web3Service.getSigner();
-      console.log('Got signer:', signer);
-
-      // Initialize contract with signer
-      const contract = new ethers.Contract(
-        USER_PROFILE_CONTRACT_ADDRESS,
-        USER_PROFILE_ABI,
-        signer
-      );
-      console.log('Contract initialized');
-
-      // Perform the update
-      const tx = await contract['updateUserProfile'](this.profile.name, this.profile.phone);
-      console.log('Transaction sent:', tx);
-
-      await tx.wait();
-      console.log('Transaction confirmed');
+      await this.userContractService.updateUserProfile(this.profile.name, this.profile.phone);
+      console.log('Profile updated successfully');
 
       // Reload profile after update
       if (this.address) {
@@ -143,7 +126,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      // You might want to show this error to the user
       throw error;
     } finally {
       this.isLoading = false;

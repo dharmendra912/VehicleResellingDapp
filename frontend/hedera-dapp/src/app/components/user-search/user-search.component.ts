@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Web3Service } from '../../services/web3.service';
+import { UserContractService } from '../../services/user-contract.service';
 
 @Component({
   selector: 'app-user-search',
@@ -82,7 +82,7 @@ export class UserSearchComponent {
   isLoading = false;
 
   constructor(
-    private web3Service: Web3Service
+    private userContractService: UserContractService
   ) {}
 
   async searchUser() {
@@ -94,7 +94,7 @@ export class UserSearchComponent {
     try {
       this.error = null;
       this.isLoading = true;
-      this.userProfile = await this.web3Service.getUserProfile(this.searchAddress);
+      this.userProfile = await this.userContractService.getUserProfile(this.searchAddress);
     } catch (error) {
       console.error('Error searching user:', error);
       this.error = 'Failed to find user. Please check the address and try again.';
