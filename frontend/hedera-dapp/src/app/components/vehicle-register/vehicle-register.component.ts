@@ -17,7 +17,7 @@ import { DialogService } from '../../services/dialog.service';
           <div class="card">
             <div class="card-body">
               <h5 class="card-title mb-4">Register New Vehicle</h5>
-              
+
               <form (ngSubmit)="registerVehicle()" #vehicleForm="ngForm">
                 <div class="mb-3">
                   <label for="regNo" class="form-label">Registration Number</label>
@@ -42,7 +42,7 @@ import { DialogService } from '../../services/dialog.service';
                     [(ngModel)]="vehicle.yearOfManufacturing"
                     required
                     min="1900"
-                    max="2024"
+                    max="2025"
                     placeholder="Enter manufacturing year"
                   >
                 </div>
@@ -94,12 +94,12 @@ export class VehicleRegisterComponent implements OnInit {
         this.vehicle.regNo,
         this.vehicle.yearOfManufacturing
       );
-      
+
       this.dialogService.showSuccess(
         'Success',
         'Vehicle registered successfully!'
       );
-      
+
       // Navigate to vehicle details page
       this.router.navigate(['/vehicle', this.vehicle.regNo]);
     } catch (error) {
@@ -112,4 +112,4 @@ export class VehicleRegisterComponent implements OnInit {
       this.isSubmitting = false;
     }
   }
-} 
+}

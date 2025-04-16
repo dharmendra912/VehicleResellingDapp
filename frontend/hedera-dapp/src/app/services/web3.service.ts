@@ -1,17 +1,13 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
+import { BehaviorSubject } from 'rxjs';
+import { DialogService } from './dialog.service';
+import { LoadingService } from './loading.service';
+import { USER_PROFILE_ABI, USER_PROFILE_CONTRACT_ADDRESS } from '../ABIs/UserProfile.abi';
 
 declare global {
   interface Window {
-    ethereum?: {
-      isMetaMask?: boolean;
-      request: (args: { method: string; params?: any[] }) => Promise<any>;
-      on: (event: string, callback: (accounts: string[]) => void) => void;
-      removeListener: (event: string, callback: (accounts: string[]) => void) => void;
-      chainId: string;
-    };
+    ethereum?: any;
   }
 }
 
@@ -19,96 +15,124 @@ declare global {
   providedIn: 'root'
 })
 export class Web3Service {
-  private isBrowser = typeof window !== 'undefined';
+  private provider: ethers.providers.Web3Provider | null = null;
+  private signer: ethers.Signer | null = null;
+  private userContract: ethers.Contract | null = null;
+  
+  private userAddressSubject = new BehaviorSubject<string | null>(null);
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private isMetaMaskAvailableSubject = new BehaviorSubject<boolean>(false);
-  private userAddressSubject = new BehaviorSubject<string | null>(null);
-  
+
+  userAddress$ = this.userAddressSubject.asObservable();
   loading$ = this.loadingSubject.asObservable();
   isMetaMaskAvailable$ = this.isMetaMaskAvailableSubject.asObservable();
-  userAddress$ = this.userAddressSubject.asObservable();
 
-  constructor() {
-    if (this.isBrowser) {
-      this.checkMetaMaskAvailability();
-      this.setupEventListeners();
-    }
+  constructor(
+    private dialogService: DialogService,
+    private loadingService: LoadingService
+  ) {
+    this.checkMetaMaskAvailability();
   }
 
   private checkMetaMaskAvailability() {
-    if (!this.isBrowser) return;
-    const isAvailable = typeof window.ethereum !== 'undefined';
+    const isAvailable = typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
     this.isMetaMaskAvailableSubject.next(isAvailable);
   }
 
-  private setupEventListeners() {
-    if (!this.isBrowser || !window.ethereum) return;
-
-    window.ethereum.on('accountsChanged', (accounts: string[]) => {
-      this.userAddressSubject.next(accounts[0] || null);
-    });
-
-    window.ethereum.on('chainChanged', () => {
-      window.location.reload();
-    });
-  }
-
-  async connectWallet(): Promise<string> {
-    if (!this.isBrowser) {
-      throw new Error('Web3 is only available in browser environment');
-    }
-
+  async connectWallet(): Promise<void> {
     try {
       this.loadingSubject.next(true);
+      
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed');
       }
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const address = accounts[0];
+      
+      // Request account access
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send('eth_requestAccounts', []);
+      
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      
+      this.provider = provider;
+      this.signer = signer;
+      
+      // Initialize user contract
+      this.userContract = new ethers.Contract(
+        USER_PROFILE_CONTRACT_ADDRESS,
+        USER_PROFILE_ABI,
+        this.signer
+      );
+      
+      // Check if user exists and initialize if new
+      await this.initializeUserIfNeeded(address);
+      
       this.userAddressSubject.next(address);
-      return address;
+      this.dialogService.showSuccess('Wallet Connection', 'Wallet connected successfully!');
     } catch (error) {
-      console.error('Error connecting to MetaMask:', error);
-      throw error;
+      console.error('Wallet connection error:', error);
+      this.dialogService.showError('Wallet Connection', error instanceof Error ? error.message : 'Failed to connect wallet');
+      this.userAddressSubject.next(null);
     } finally {
       this.loadingSubject.next(false);
     }
   }
 
-  async getProvider() {
-    if (!this.isBrowser) {
-      throw new Error('Web3 is only available in browser environment');
-    }
-
+  private async initializeUserIfNeeded(address: string) {
     try {
-      this.loadingSubject.next(true);
-      if (!window.ethereum) {
-        throw new Error('MetaMask is not installed');
+      if (!this.userContract) return;
+      
+      // Check if user exists by calling users mapping
+      const userData = await this.userContract['users'](address);
+      const isNewUser = userData.walletAddress === '0x0000000000000000000000000000000000000000';
+      
+      if (isNewUser) {
+        console.log('New user detected, initializing profile...');
+        // Call getAndSaveUserProfile in background
+        this.userContract['getUserProfile'](address).catch((error: unknown) => {
+          console.error('Error initializing user profile:', error);
+        });
+        
+        // Show welcome dialog for new users
+        this.dialogService.showSuccess(
+          'Welcome!', 
+          'Thank you for joining. Please complete your profile to get started.'
+        );
       }
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      return new ethers.providers.Web3Provider(window.ethereum);
     } catch (error) {
-      console.error('Error getting provider:', error);
-      throw error;
-    } finally {
-      this.loadingSubject.next(false);
+      console.error('Error checking user status:', error);
     }
   }
 
-  async getSigner() {
-    if (!this.isBrowser) {
-      throw new Error('Web3 is only available in browser environment');
-    }
-
+  async disconnectWallet(): Promise<void> {
     try {
-      this.loadingSubject.next(true);
-      const provider = await this.getProvider();
-      return provider.getSigner();
+      // Clear all local state
+      this.provider = null;
+      this.signer = null;
+      this.userContract = null;
+      this.userAddressSubject.next(null);
+      
+      // Reset MetaMask connection
+      if (window.ethereum) {
+        // Request MetaMask to disconnect
+        await window.ethereum.request({
+          method: 'wallet_revokePermissions',
+          params: [{
+            eth_accounts: {}
+          }]
+        });
+      }
     } catch (error) {
-      console.error('Error getting signer:', error);
+      console.error('Error disconnecting wallet:', error);
       throw error;
-    } finally {
-      this.loadingSubject.next(false);
     }
+  }
+
+  async getProvider(): Promise<ethers.providers.Web3Provider | null> {
+    return this.provider;
+  }
+
+  async getSigner(): Promise<ethers.Signer | null> {
+    return this.signer;
   }
 }

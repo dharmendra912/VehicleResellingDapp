@@ -18,7 +18,6 @@ import { DialogService } from '../../services/dialog.service';
             </a>
             <nav class="d-flex gap-3">
               <a routerLink="/user/search" class="text-decoration-none text-dark small" routerLinkActive="active">Search Users</a>
-              <a routerLink="/user/profile" class="text-decoration-none text-dark small" routerLinkActive="active">My Profile</a>
               <a routerLink="/vehicle/search" class="text-decoration-none text-dark small" routerLinkActive="active">Search Vehicle</a>
               <a routerLink="/vehicle/register" class="text-decoration-none text-dark small" routerLinkActive="active">Register Vehicle</a>
             </nav>
@@ -35,13 +34,16 @@ import { DialogService } from '../../services/dialog.service';
                 <span class="text-muted small">
                   Connected: {{ address }}
                 </span>
-                <a 
-                  [routerLink]="['/user/profile']" 
+                <a
+                  [routerLink]="['/user/profile']"
                   [queryParams]="{ address: address }"
                   class="btn btn-outline-primary btn-sm ms-2"
                 >
                   My Profile
                 </a>
+                <button class="btn btn-outline-danger btn-sm ms-2" (click)="disconnectWallet()">
+                  Disconnect
+                </button>
               </div>
               <ng-template #notConnected>
                 <button class="btn btn-primary btn-sm" (click)="connectWallet()">
@@ -85,6 +87,18 @@ export class HeaderComponent {
       this.dialogService.showError(
         'Wallet Connection Error',
         error instanceof Error ? error.message : 'Failed to connect wallet. Please try again.'
+      );
+    }
+  }
+
+  async disconnectWallet() {
+    try {
+      await this.web3Service.disconnectWallet();
+      this.dialogService.showSuccess('Wallet Disconnected', 'Wallet has been disconnected successfully');
+    } catch (error) {
+      this.dialogService.showError(
+        'Wallet Disconnection Error',
+        error instanceof Error ? error.message : 'Failed to disconnect wallet. Please try again.'
       );
     }
   }

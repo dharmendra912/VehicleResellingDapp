@@ -60,13 +60,48 @@ export class UserContractService {
       this.loadingService.show();
       const contract = await this.getContract();
       
-      // Get all user data in one call using the users mapping
-      const userData = await contract['users'](userAddr);
+      // Use the individual view functions to get the data
+      const [name, phone, vehicles] = await Promise.all([
+        contract['getUserName'](userAddr),
+        contract['getUserPhone'](userAddr),
+        contract['getUserVehicles'](userAddr)
+      ]);
+
+      return {
+        name: name || '',
+        phone: phone || '',
+        vehicles: vehicles || []
+      };
+    } catch (error) {
+      this.handleError(error, 'Get User Profile');
+      return null;
+    } finally {
+      this.loadingService.hide();
+    }
+  }
+
+  
+  async getAndSaveUserProfile(userAddr: string): Promise<{ name: string; phone: string; vehicles: string[] } | null> {
+    try {
+      this.loadingService.show();
+      const contract = await this.getContract();
+      
+      // Call getUserProfile and wait for the transaction to be mined
+      const tx = await contract['getUserProfile'](userAddr);
+      const result = await tx.wait();
+      console.log('Transaction result:', result);
+      
+      // Get the return values from the transaction logs
+      const [name, phone, vehicles] = await Promise.all([
+        contract['getUserName'](userAddr),
+        contract['getUserPhone'](userAddr),
+        contract['getUserVehicles'](userAddr)
+      ]);
       
       return {
-        name: userData.name || '',
-        phone: userData.phone || '',
-        vehicles: userData.vehicles || []
+        name: name || '',
+        phone: phone || '',
+        vehicles: vehicles || []
       };
     } catch (error) {
       console.error('Get User Profile error:', error);

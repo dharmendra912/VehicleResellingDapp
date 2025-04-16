@@ -13,7 +13,7 @@ import { DialogService } from '../../services/dialog.service';
       <div class="max-w-md mx-auto">
         <div class="bg-white rounded-xl shadow-md p-6">
           <h2 class="text-2xl font-bold text-gray-800 mb-4">Search Vehicle</h2>
-          
+
           <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Registration Number</label>
             <input
@@ -28,7 +28,7 @@ import { DialogService } from '../../services/dialog.service';
           <button
             (click)="searchVehicle()"
             [disabled]="!searchRegNo || isLoading"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+            class="bg-blue-500 hover:bg-blue-700  font-bold py-2 px-4 rounded w-full"
           >
             <span *ngIf="!isLoading">Search Vehicle</span>
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
@@ -72,4 +72,4 @@ export class VehicleSearchComponent {
         this.isLoading = false;
       });
   }
-} 
+}

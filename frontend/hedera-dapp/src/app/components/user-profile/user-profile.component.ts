@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { UserContractService } from '../../services/user-contract.service';
 import { VehicleContractService } from '../../services/vehicle-contract.service';
 import { Web3Service } from '../../services/web3.service';
@@ -28,7 +28,7 @@ interface UserProfile {
           <!-- Header -->
           <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
             <h1 class="text-2xl font-bold text-gray-900 mb-1">User Profile</h1>
-            <p class="text-sm text-gray-600">Manage your profile information and vehicles</p>
+            <p class="text-sm text-gray-600">Manage profile information and vehicles</p>
           </div>
 
           <!-- Profile Form -->
@@ -76,7 +76,7 @@ interface UserProfile {
               <div *ngIf="isEditable" class="flex justify-end pt-2">
                 <button
                   type="submit"
-                  class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                  class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium  shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                   [disabled]="isLoading"
                 >
                   {{ isLoading ? 'Saving...' : 'Save Profile' }}
@@ -87,17 +87,17 @@ interface UserProfile {
 
           <!-- Vehicles Section -->
           <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Vehicles</h2>
-            
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Vehicles</h2>
+
             <!-- No Vehicles Message -->
-            <div *ngIf="profile.vehicles.length === 0" 
+            <div *ngIf="profile.vehicles.length === 0"
                  class="text-center py-8 px-4 border-2 border-dashed border-gray-300 rounded-lg">
               <p class="text-sm text-gray-500">No vehicles registered yet</p>
             </div>
 
             <!-- Vehicles List -->
             <div *ngIf="profile.vehicles.length > 0" class="space-y-1">
-              <a *ngFor="let vehicle of profile.vehicles" 
+              <a *ngFor="let vehicle of profile.vehicles"
                  [routerLink]="['/vehicle', vehicle]"
                  class="block px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors duration-150">
                 <span class="text-sm font-medium text-gray-900">{{ vehicle }}</span>
@@ -121,34 +121,35 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   isLoading = false;
   currentUserAddress: string | null = null;
   private userAddressSubscription: Subscription | null = null;
+  private routeSubscription: Subscription | null = null;
 
   constructor(
     private userContractService: UserContractService,
     private vehicleContractService: VehicleContractService,
     private web3Service: Web3Service,
     private loadingService: LoadingService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    // Subscribe to user address changes
-    this.userAddressSubscription = this.web3Service.userAddress$.subscribe(async (address) => {
-      this.currentUserAddress = address;
-      
-      if (address) {
-        // Check if we're viewing our own profile
-        const urlParams = new URLSearchParams(window.location.search);
-        const viewAddress = urlParams.get('address');
-        
-        if (viewAddress) {
-          // Viewing another user's profile
-          this.isEditable = false;
-          await this.loadProfile(viewAddress);
-        } else {
-          // Viewing own profile
-          this.isEditable = true;
-          await this.loadProfile(address);
-        }
+    // Subscribe to route query params changes
+    this.routeSubscription = this.route.queryParams.subscribe(params => {
+      const viewAddress = params['address'];
+
+      if (viewAddress) {
+        // If we have an address in URL, load that profile directly
+        this.isEditable = false;
+        this.loadProfile(viewAddress);
+      } else {
+        // If no address in URL, subscribe to wallet changes for logged-in user's profile
+        this.userAddressSubscription = this.web3Service.userAddress$.subscribe(address => {
+          this.currentUserAddress = address;
+          if (address) {
+            this.isEditable = true;
+            this.loadProfile(address);
+          }
+        });
       }
     });
   }
@@ -157,16 +158,19 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     if (this.userAddressSubscription) {
       this.userAddressSubscription.unsubscribe();
     }
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
   }
 
   private async loadProfile(address: string) {
     try {
       console.log('Loading profile for address:', address);
       this.loadingService.show();
-      
+
       // Fetch user profile data
       const profileData = await this.userContractService.getUserProfile(address);
-      
+
       if (profileData) {
         // Update the profile object with the fetched data
         this.profile = {

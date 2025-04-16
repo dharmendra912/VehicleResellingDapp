@@ -11,10 +11,10 @@ import { DialogService } from '../../services/dialog.service';
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header" [ngClass]="{
-            'bg-danger text-white': (dialogService.dialogConfig$ | async)?.type === 'error',
-            'bg-success text-white': (dialogService.dialogConfig$ | async)?.type === 'success',
+            'bg-danger ': (dialogService.dialogConfig$ | async)?.type === 'error',
+            'bg-success ': (dialogService.dialogConfig$ | async)?.type === 'success',
             'bg-warning text-dark': (dialogService.dialogConfig$ | async)?.type === 'warning',
-            'bg-info text-white': (dialogService.dialogConfig$ | async)?.type === 'info'
+            'bg-info ': (dialogService.dialogConfig$ | async)?.type === 'info'
           }">
             <h5 class="modal-title">
               <i *ngIf="(dialogService.dialogConfig$ | async)?.type === 'error'" class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -56,4 +56,4 @@ import { DialogService } from '../../services/dialog.service';
 })
 export class DialogComponent {
   constructor(public dialogService: DialogService) {}
-} 
+}
