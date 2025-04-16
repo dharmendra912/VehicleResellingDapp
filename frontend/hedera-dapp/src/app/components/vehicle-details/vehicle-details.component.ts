@@ -76,6 +76,7 @@ interface Accident {
             </div>
           </div>
         </div>
+        <br>
 
         <!-- Maintenance History -->
         <div class="mb-6">
@@ -89,12 +90,14 @@ interface Accident {
             <div *ngFor="let record of maintenanceHistory" class="border rounded p-2">
               <div class="flex justify-between">
                 <span class="font-medium">{{ formatTimestamp(record.date) }}</span>
+                <br>
                 <span class="text-sm text-gray-500">{{ record.maintenanceType }}</span>
               </div>
               <p class="text-sm text-gray-600">{{ record.serviceProvider }}</p>
             </div>
           </div>
         </div>
+        <br>
 
         <!-- Insurance History -->
         <div class="mb-6">
@@ -114,6 +117,7 @@ interface Accident {
             </div>
           </div>
         </div>
+        <br>
 
         <!-- Accident History -->
         <div class="mb-6">
@@ -133,7 +137,7 @@ interface Accident {
             </div>
           </div>
         </div>
-
+        <br>
         <!-- Past Owners List -->
         <div *ngIf="vehicleDetails?.pastOwners?.length" class="mb-6">
           <h3 class="text-lg font-semibold mb-2">Past Owners</h3>
@@ -150,18 +154,19 @@ interface Accident {
           </div>
         </div>
 
+        <br>
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-bold">Update Details:</h2>
           <div *ngIf="isOwner" class="flex space-x-2">
             <button (click)="showAddMaintenance = true" class="btn btn-primary btn-sm">
               Add Maintenance
-            </button>
+            </button>&nbsp;
             <button (click)="showAddInsurance = true" class="btn btn-primary btn-sm">
               Add Insurance
-            </button>
+            </button>&nbsp;
             <button (click)="showAddAccident = true" class="btn btn-primary btn-sm">
               Add Accident
-            </button>
+            </button>&nbsp;
             <button (click)="showResellForm = true" class="btn btn-primary btn-sm">
               Resell Vehicle
             </button>
