@@ -5,12 +5,14 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
 import { VehicleRegisterComponent } from './components/vehicle-register/vehicle-register.component';
 import { UserSearchComponent } from './components/user-search/user-search.component';
+import { VehicleSearchComponent } from './components/vehicle-search/vehicle-search.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'user/profile', component: UserProfileComponent },
-  { path: 'vehicle/register', component: VehicleRegisterComponent },
-  { path: 'vehicle/:regNo', component: VehicleDetailsComponent },
   { path: 'user/search', component: UserSearchComponent },
+  { path: 'vehicle/register', component: VehicleRegisterComponent },
+  { path: 'vehicle/search', component: VehicleSearchComponent },
+  { path: 'vehicle/:regNo', component: VehicleDetailsComponent },
   { path: '**', redirectTo: '' }
 ];

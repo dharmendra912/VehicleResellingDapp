@@ -1,56 +1,43 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <div class="container mx-auto p-4">
-      <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+      <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         <div class="p-8">
           <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-800">Vehicle Registry</h1>
-            <p class="text-gray-600">Search for vehicles or owners</p>
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Vehicle Lifecycle Platform</h1>
+            <p class="text-gray-600 mb-6">A decentralized platform for managing vehicle ownership and history</p>
           </div>
 
-          <div class="space-y-4">
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">Search Vehicle</label>
-              <div class="flex">
-                <input
-                  [(ngModel)]="vehicleRegNo"
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  type="text"
-                  placeholder="Enter vehicle registration number"
-                />
-                <button
-                  (click)="searchVehicle()"
-                  class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Search
-                </button>
-              </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-blue-50 p-6 rounded-lg">
+              <h2 class="text-xl font-semibold text-gray-800 mb-3">For Vehicle Owners</h2>
+              <ul class="space-y-2 text-gray-600">
+                <li>Register your vehicles</li>
+                <li>View vehicle history</li>
+                <li>Manage ownership records</li>
+              </ul>
+              <a routerLink="/vehicle/register" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Register Vehicle
+              </a>
             </div>
 
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">Search Owner</label>
-              <div class="flex">
-                <input
-                  [(ngModel)]="ownerAddress"
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  type="text"
-                  placeholder="Enter owner address"
-                />
-                <button
-                  (click)="searchOwner()"
-                  class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Search
-                </button>
-              </div>
+            <div class="bg-green-50 p-6 rounded-lg">
+              <h2 class="text-xl font-semibold text-gray-800 mb-3">For Buyers</h2>
+              <ul class="space-y-2 text-gray-600">
+                <li>Search vehicle history</li>
+                <li>Verify ownership</li>
+                <li>Check maintenance records</li>
+              </ul>
+              <a routerLink="/vehicle/search" class="mt-4 inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Search Vehicle
+              </a>
             </div>
           </div>
         </div>
@@ -59,21 +46,4 @@ import { Router } from '@angular/router';
   `,
   styles: []
 })
-export class HomeComponent {
-  vehicleRegNo = '';
-  ownerAddress = '';
-
-  constructor(private router: Router) {}
-
-  searchVehicle() {
-    if (this.vehicleRegNo) {
-      this.router.navigate(['/vehicle', this.vehicleRegNo]);
-    }
-  }
-
-  searchOwner() {
-    if (this.ownerAddress) {
-      this.router.navigate(['/user/profile', this.ownerAddress]);
-    }
-  }
-} 
+export class HomeComponent {}

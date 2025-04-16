@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^19.2.6",
     "@angular/common": "^19.2.0",
     "@angular/compiler": "^19.2.0",
     "@angular/core": "^19.2.0",
@@ -22,7 +23,9 @@
     "@angular/ssr": "^19.2.7",
     "@hashgraph/hethers": "^1.2.6",
     "@hashgraph/sdk": "^2.62.0",
-    "ethers": "^5.7.2",
+    "base64-js": "^1.5.1",
+    "buffer": "^6.0.3",
+    "ethers": "^5.8.0",
     "express": "^4.18.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
