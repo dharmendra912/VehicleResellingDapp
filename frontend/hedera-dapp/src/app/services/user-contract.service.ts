@@ -17,7 +17,7 @@ export class UserContractService {
     private dialogService: DialogService
   ) {}
 
-  private async ensureUserContract() {
+  private async getContract() {
     if (!this.userContract) {
       const provider = await this.web3Service.getProvider();
       if (!provider) throw new Error('Provider not initialized');
@@ -36,10 +36,11 @@ export class UserContractService {
     return this.userContract;
   }
 
-  async updateUserProfile(name: string, phone: string) {
+  // Create or update user profile
+  async updateUserProfile(name: string, phone: string): Promise<void> {
     try {
       this.loadingService.show();
-      const contract = await this.ensureUserContract();
+      const contract = await this.getContract();
       const tx = await contract['updateUserProfile'](name, phone);
       await tx.wait();
       this.dialogService.showSuccess(
@@ -53,11 +54,12 @@ export class UserContractService {
     }
   }
 
-  async getUserProfile(address: string) {
+  // Retrieve user profile details
+  async getUserProfile(userAddr: string): Promise<{ name: string; phone: string; vehicles: string[] } | null> {
     try {
       this.loadingService.show();
-      const contract = await this.ensureUserContract();
-      const [name, phone, vehicles] = await contract['getUserProfile'](address);
+      const contract = await this.getContract();
+      const [name, phone, vehicles] = await contract['getUserProfile'](userAddr);
       return { name, phone, vehicles };
     } catch (error) {
       this.handleError(error, 'Get User Profile');
@@ -67,12 +69,26 @@ export class UserContractService {
     }
   }
 
-  async getUserName(address: string) {
+  // Getter for the wallet address associated with the user profile
+  async getUserWallet(userAddr: string): Promise<string | null> {
     try {
       this.loadingService.show();
-      const contract = await this.ensureUserContract();
-      const name = await contract['getUserName'](address);
-      return name;
+      const contract = await this.getContract();
+      return await contract['getUserWallet'](userAddr);
+    } catch (error) {
+      this.handleError(error, 'Get User Wallet');
+      return null;
+    } finally {
+      this.loadingService.hide();
+    }
+  }
+
+  // Getter for the user's name
+  async getUserName(userAddr: string): Promise<string> {
+    try {
+      this.loadingService.show();
+      const contract = await this.getContract();
+      return await contract['getUserName'](userAddr);
     } catch (error) {
       this.handleError(error, 'Get User Name');
       return '';
@@ -81,12 +97,12 @@ export class UserContractService {
     }
   }
 
-  async getUserPhone(address: string) {
+  // Getter for the user's phone number
+  async getUserPhone(userAddr: string): Promise<string> {
     try {
       this.loadingService.show();
-      const contract = await this.ensureUserContract();
-      const phone = await contract['getUserPhone'](address);
-      return phone;
+      const contract = await this.getContract();
+      return await contract['getUserPhone'](userAddr);
     } catch (error) {
       this.handleError(error, 'Get User Phone');
       return '';
@@ -95,29 +111,15 @@ export class UserContractService {
     }
   }
 
-  async getUserVehicles(address: string) {
+  // Getter for the array of vehicle registration numbers
+  async getUserVehicles(userAddr: string): Promise<string[]> {
     try {
       this.loadingService.show();
-      const contract = await this.ensureUserContract();
-      const vehicles = await contract['getUserVehicles'](address);
-      return vehicles;
+      const contract = await this.getContract();
+      return await contract['getUserVehicles'](userAddr);
     } catch (error) {
       this.handleError(error, 'Get User Vehicles');
       return [];
-    } finally {
-      this.loadingService.hide();
-    }
-  }
-
-  async getUserWallet(address: string) {
-    try {
-      this.loadingService.show();
-      const contract = await this.ensureUserContract();
-      const wallet = await contract['getUserWallet'](address);
-      return wallet;
-    } catch (error) {
-      this.handleError(error, 'Get User Wallet');
-      return null;
     } finally {
       this.loadingService.hide();
     }

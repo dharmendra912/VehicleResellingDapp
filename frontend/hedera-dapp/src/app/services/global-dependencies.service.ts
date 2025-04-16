@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ethers } from 'ethers';
 import * as base64js from 'base64-js';
+import { Buffer } from 'buffer';
 
 @Injectable({
   providedIn: 'root'
@@ -13,22 +14,11 @@ export class GlobalDependenciesService {
   private initializeGlobals(): void {
     try {
       if (typeof window !== 'undefined') {
-        // Create a simple Buffer polyfill
-        const BufferPolyfill = {
-          from: (data: string | Uint8Array, encoding?: string) => {
-            if (typeof data === 'string') {
-              return new TextEncoder().encode(data);
-            }
-            return data;
-          },
-          isBuffer: (obj: any) => obj instanceof Uint8Array
-        };
-
         // @ts-ignore - We know these are valid assignments
-        window.Buffer = BufferPolyfill;
+        window.Buffer = Buffer;
         // @ts-ignore - We know these are valid assignments
         window.ethers = ethers;
-        
+
         // Instead of assigning base64 to window, we'll use it directly in our service
         // @ts-ignore - We know these are valid assignments
         window.base64ToBytes = base64js.toByteArray;
@@ -39,13 +29,4 @@ export class GlobalDependenciesService {
       console.error('Error initializing global dependencies:', error);
     }
   }
-
-  // Helper methods for base64 operations
-  public base64ToBytes(base64String: string): Uint8Array {
-    return base64js.toByteArray(base64String);
-  }
-
-  public bytesToBase64(bytes: Uint8Array): string {
-    return base64js.fromByteArray(bytes);
-  }
-} 
+}
