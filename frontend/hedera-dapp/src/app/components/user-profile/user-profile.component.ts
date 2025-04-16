@@ -136,11 +136,14 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     // Subscribe to route query params changes
     this.routeSubscription = this.route.queryParams.subscribe(params => {
       const viewAddress = params['address'];
-
+      
       if (viewAddress) {
-        // If we have an address in URL, load that profile directly
-        this.isEditable = false;
-        this.loadProfile(viewAddress);
+        // If we have an address in URL, check if it's the current user's address
+        this.userAddressSubscription = this.web3Service.userAddress$.subscribe(address => {
+          this.currentUserAddress = address;
+          this.isEditable = address === viewAddress;
+          this.loadProfile(viewAddress);
+        });
       } else {
         // If no address in URL, subscribe to wallet changes for logged-in user's profile
         this.userAddressSubscription = this.web3Service.userAddress$.subscribe(address => {

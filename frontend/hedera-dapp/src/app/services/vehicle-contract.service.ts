@@ -48,9 +48,11 @@ export class VehicleContractService {
 
   private async getContract() {
     if (!this.vehicleContract) {
+      console.log('VehicleContractService: Initializing contract...');
       const provider = await this.web3Service.getProvider();
       if (!provider) throw new Error('Provider not initialized');
       
+      console.log('VehicleContractService: Creating contract with address:', VEHICLE_LEDGER_CONTRACT_ADDRESS);
       this.vehicleContract = new ethers.Contract(
         VEHICLE_LEDGER_CONTRACT_ADDRESS,
         VEHICLE_LEDGER_ABI,
@@ -59,6 +61,7 @@ export class VehicleContractService {
       
       const signer = await this.web3Service.getSigner();
       if (signer) {
+        console.log('VehicleContractService: Connecting contract with signer');
         this.vehicleContract = this.vehicleContract.connect(signer);
       }
     }
@@ -159,7 +162,10 @@ export class VehicleContractService {
   async getVehicleDetails(regNo: string): Promise<VehicleDetails | null> {
     try {
       this.loadingService.show();
+      console.log('VehicleContractService: Getting vehicle details for:', regNo);
       const contract = await this.getContract();
+      
+      console.log('VehicleContractService: Calling getVehicleDetails on contract');
       const [
         regNo_,
         currentOwner,
@@ -170,6 +176,17 @@ export class VehicleContractService {
         accidentCount,
         resellCount
       ] = await contract['getVehicleDetails'](regNo);
+      
+      console.log('VehicleContractService: Raw response from getVehicleDetails:', {
+        regNo: regNo_,
+        currentOwner,
+        pastOwners,
+        yearOfManufacturing,
+        maintenanceCount,
+        insuranceCount,
+        accidentCount,
+        resellCount
+      });
       
       return {
         regNo: regNo_,
@@ -182,6 +199,7 @@ export class VehicleContractService {
         resellCount
       };
     } catch (error) {
+      console.error('VehicleContractService: Error in getVehicleDetails:', error);
       this.handleError(error, 'Get Vehicle Details');
       return null;
     } finally {
@@ -193,9 +211,16 @@ export class VehicleContractService {
   async getMaintenanceHistory(regNo: string): Promise<Maintenance[]> {
     try {
       this.loadingService.show();
+      console.log('VehicleContractService: Getting maintenance history for:', regNo);
       const contract = await this.getContract();
-      return await contract['getMaintenanceHistory'](regNo);
+      
+      console.log('VehicleContractService: Calling getMaintenanceHistory on contract');
+      const history = await contract['getMaintenanceHistory'](regNo);
+      console.log('VehicleContractService: Raw maintenance history:', history);
+      
+      return history;
     } catch (error) {
+      console.error('VehicleContractService: Error in getMaintenanceHistory:', error);
       this.handleError(error, 'Get Maintenance History');
       return [];
     } finally {
@@ -207,9 +232,16 @@ export class VehicleContractService {
   async getInsuranceHistory(regNo: string): Promise<Insurance[]> {
     try {
       this.loadingService.show();
+      console.log('VehicleContractService: Getting insurance history for:', regNo);
       const contract = await this.getContract();
-      return await contract['getInsuranceHistory'](regNo);
+      
+      console.log('VehicleContractService: Calling getInsuranceHistory on contract');
+      const history = await contract['getInsuranceHistory'](regNo);
+      console.log('VehicleContractService: Raw insurance history:', history);
+      
+      return history;
     } catch (error) {
+      console.error('VehicleContractService: Error in getInsuranceHistory:', error);
       this.handleError(error, 'Get Insurance History');
       return [];
     } finally {
@@ -221,9 +253,16 @@ export class VehicleContractService {
   async getAccidentHistory(regNo: string): Promise<Accident[]> {
     try {
       this.loadingService.show();
+      console.log('VehicleContractService: Getting accident history for:', regNo);
       const contract = await this.getContract();
-      return await contract['getAccidentHistory'](regNo);
+      
+      console.log('VehicleContractService: Calling getAccidentHistory on contract');
+      const history = await contract['getAccidentHistory'](regNo);
+      console.log('VehicleContractService: Raw accident history:', history);
+      
+      return history;
     } catch (error) {
+      console.error('VehicleContractService: Error in getAccidentHistory:', error);
       this.handleError(error, 'Get Accident History');
       return [];
     } finally {

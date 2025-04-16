@@ -68,10 +68,7 @@ import { RouterModule } from '@angular/router';
                           Access detailed vehicle reports
                       </li>
                   </ul>
-                  <a routerLink="/vehicle/register"
-                     class="inline-block bg-blue-600 hover:bg-blue-700  font-bold py-3 px-6 rounded-lg transition duration-300">
-                      Get Started
-                  </a>
+
               </div>
 
               <div class="bg-green-50 p-8 rounded-xl">
@@ -90,28 +87,11 @@ import { RouterModule } from '@angular/router';
                           Make informed purchase decisions
                       </li>
                   </ul>
-                  <a routerLink="/vehicle/search"
-                     class="inline-block bg-green-600 hover:bg-green-700  font-bold py-3 px-6 rounded-lg transition duration-300">
-                      Search Vehicles
-                  </a>
+
               </div>
           </div>
       </div>
 
-      <!-- CTA Section -->
-      <div class="bg-gray-900 ">
-          <div class="container mx-auto px-4 py-16">
-              <div class="max-w-3xl mx-auto text-center">
-                  <h2 class="text-3xl font-bold mb-6">Ready to Experience the Future of Vehicle Management?</h2>
-                  <p class="text-xl mb-8">Join thousands of users who trust our platform for secure and transparent
-                      vehicle history management</p>
-                  <a routerLink="/vehicle/register"
-                     class="inline-block bg-blue-600 hover:bg-blue-700  font-bold py-3 px-8 rounded-lg transition duration-300">
-                      Get Started Today
-                  </a>
-              </div>
-          </div>
-      </div>
   `,
   styles: []
 })
