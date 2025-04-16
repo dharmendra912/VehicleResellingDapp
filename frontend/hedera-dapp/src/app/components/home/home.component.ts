@@ -8,18 +8,17 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
       <!-- Hero Section -->
-      <div class="bg-gradient-to-r from-blue-600 to-blue-800">
+      <div class="bg-primary">
           <div class="container mx-auto px-4 py-16">
               <div class="max-w-3xl mx-auto text-center">
-                  <h1 class="text-4xl md:text-5xl font-bold mb-6">AutoTrust - A Vehicle Lifecycle Platform</h1>
+                  <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">AutoTrust - A Vehicle Lifecycle Platform</h1>
                   <div class="flex flex-col sm:flex-row gap-4 justify-center">
                       <a routerLink="/vehicle/register"
-                         class="text-blue-600 hover:bg-blue-50 font-bold py-3 px-6 rounded-lg transition duration-300">
+                         class="btn btn-outline-light btn-lg">
                           Register Your Vehicle
                       </a>
-                      <br>
                       <a routerLink="/vehicle/search"
-                         class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 font-bold py-3 px-6 rounded-lg transition duration-300">
+                         class="btn btn-outline-light btn-lg">
                           Search Vehicle History
                       </a>
                   </div>
@@ -29,22 +28,24 @@ import { RouterModule } from '@angular/router';
 
       <!-- Features Section -->
       <div class="container mx-auto px-4 py-16">
-
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
-                  <h3 class="text-xl font-semibold mb-3">Secure Ownership</h3>
-                  <p class="text-gray-600">Immutable records on the blockchain ensure tamper-proof vehicle ownership
-                      history</p>
+              <div class="card shadow-sm">
+                  <div class="card-body">
+                      <h3 class="card-title text-dark">Secure Ownership</h3>
+                      <p class="card-text text-muted">Immutable records on the blockchain ensure tamper-proof vehicle ownership history</p>
+                  </div>
               </div>
-              <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
-                  <h3 class="text-xl font-semibold mb-3">Complete History</h3>
-                  <p class="text-gray-600">Access comprehensive vehicle maintenance and ownership records in one
-                      place</p>
+              <div class="card shadow-sm">
+                  <div class="card-body">
+                      <h3 class="card-title text-dark">Complete History</h3>
+                      <p class="card-text text-muted">Access comprehensive vehicle maintenance and ownership records in one place</p>
+                  </div>
               </div>
-              <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
-                  <h3 class="text-xl font-semibold mb-3">Instant Verification</h3>
-                  <p class="text-gray-600">Quick and reliable verification of vehicle authenticity and ownership
-                      status</p>
+              <div class="card shadow-sm">
+                  <div class="card-body">
+                      <h3 class="card-title text-dark">Instant Verification</h3>
+                      <p class="card-text text-muted">Quick and reliable verification of vehicle authenticity and ownership status</p>
+                  </div>
               </div>
           </div>
       </div>
@@ -52,46 +53,31 @@ import { RouterModule } from '@angular/router';
       <!-- User Sections -->
       <div class="container mx-auto px-4 py-16">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div class="bg-blue-50 p-8 rounded-xl">
-                  <h2 class="text-2xl font-bold text-gray-800 mb-4">For Vehicle Owners</h2>
-                  <ul class="space-y-3 text-gray-600 mb-6">
-                      <li class="flex items-center">
-                          Register and manage your vehicles
-                      </li>
-                      <li class="flex items-center">
-                          Track maintenance history
-                      </li>
-                      <li class="flex items-center">
-                          Transfer ownership securely
-                      </li>
-                      <li class="flex items-center">
-                          Access detailed vehicle reports
-                      </li>
-                  </ul>
-
+              <div class="card shadow-sm">
+                  <div class="card-body">
+                      <h2 class="card-title text-dark mb-4">For Vehicle Owners</h2>
+                      <ul class="list-unstyled text-muted mb-0">
+                          <li class="mb-2">Register and manage your vehicles</li>
+                          <li class="mb-2">Track maintenance history</li>
+                          <li class="mb-2">Transfer ownership securely</li>
+                          <li>Access detailed vehicle reports</li>
+                      </ul>
+                  </div>
               </div>
 
-              <div class="bg-green-50 p-8 rounded-xl">
-                  <h2 class="text-2xl font-bold text-gray-800 mb-4">For Buyers</h2>
-                  <ul class="space-y-3 text-gray-600 mb-6">
-                      <li class="flex items-center">
-                          Verify vehicle authenticity
-                      </li>
-                      <li class="flex items-center">
-                          Check complete ownership history
-                      </li>
-                      <li class="flex items-center">
-                          View maintenance records
-                      </li>
-                      <li class="flex items-center">
-                          Make informed purchase decisions
-                      </li>
-                  </ul>
-
+              <div class="card shadow-sm">
+                  <div class="card-body">
+                      <h2 class="card-title text-dark mb-4">For Buyers</h2>
+                      <ul class="list-unstyled text-muted mb-0">
+                          <li class="mb-2">Verify vehicle authenticity</li>
+                          <li class="mb-2">Check complete ownership history</li>
+                          <li class="mb-2">View maintenance records</li>
+                          <li>Make informed purchase decisions</li>
+                      </ul>
+                  </div>
               </div>
           </div>
       </div>
-
   `,
   styles: []
 })

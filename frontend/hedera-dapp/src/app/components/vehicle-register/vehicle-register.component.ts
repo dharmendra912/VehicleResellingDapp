@@ -14,13 +14,13 @@ import { DialogService } from '../../services/dialog.service';
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-8">
-          <div class="card">
+          <div class="card shadow-sm">
             <div class="card-body">
-              <h5 class="card-title mb-4">Register New Vehicle</h5>
+              <h5 class="card-title mb-4 text-dark">Register New Vehicle</h5>
 
               <form (ngSubmit)="registerVehicle()" #vehicleForm="ngForm">
                 <div class="mb-3">
-                  <label for="regNo" class="form-label">Registration Number&nbsp;</label>
+                  <label for="regNo" class="form-label text-dark">Registration Number</label>
                   <input
                     type="text"
                     class="form-control"
@@ -33,7 +33,7 @@ import { DialogService } from '../../services/dialog.service';
                 </div>
 
                 <div class="mb-3">
-                  <label for="yearOfManufacturing" class="form-label">Year of Manufacturing&nbsp;</label>
+                  <label for="yearOfManufacturing" class="form-label text-dark">Year of Manufacturing</label>
                   <input
                     type="number"
                     class="form-control"

@@ -1,11 +1,11 @@
-<div class="app-container">
+<div class="app-container bg-light">
   <app-header></app-header>
-  <main class="main-content" *ngIf="web3Service.userAddress$ | async">
+  <main class="main-content py-4" *ngIf="web3Service.userAddress$ | async">
     <router-outlet></router-outlet>
   </main>
   <div *ngIf="!(web3Service.userAddress$ | async)" class="not-connected-message">
     <div class="container text-center py-5">
-      <h2>Please connect your wallet to continue</h2>
+      <h2 class="text-dark mb-3">Please connect your wallet to continue</h2>
       <p class="text-muted">Connect your wallet to access the application features</p>
     </div>
   </div>

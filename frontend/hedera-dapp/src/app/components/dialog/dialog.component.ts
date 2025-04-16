@@ -11,10 +11,10 @@ import { DialogService } from '../../services/dialog.service';
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header" [ngClass]="{
-            'bg-danger ': (dialogService.dialogConfig$ | async)?.type === 'error',
-            'bg-success ': (dialogService.dialogConfig$ | async)?.type === 'success',
-            'bg-warning text-dark': (dialogService.dialogConfig$ | async)?.type === 'warning',
-            'bg-info ': (dialogService.dialogConfig$ | async)?.type === 'info'
+            'bg-primary text-white': (dialogService.dialogConfig$ | async)?.type === 'info',
+            'bg-danger text-white': (dialogService.dialogConfig$ | async)?.type === 'error',
+            'bg-success text-white': (dialogService.dialogConfig$ | async)?.type === 'success',
+            'bg-warning text-dark': (dialogService.dialogConfig$ | async)?.type === 'warning'
           }">
             <h5 class="modal-title">
               <i *ngIf="(dialogService.dialogConfig$ | async)?.type === 'error'" class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -29,7 +29,7 @@ import { DialogService } from '../../services/dialog.service';
             <p class="mb-0">{{ (dialogService.dialogConfig$ | async)?.message }}</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="dialogService.hide()">Close</button>
+            <button type="button" class="btn btn-primary" (click)="dialogService.hide()">Close</button>
           </div>
         </div>
       </div>

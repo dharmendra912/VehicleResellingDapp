@@ -37,11 +37,11 @@ import { DialogService } from '../../services/dialog.service';
                 <a
                   [routerLink]="['/user/profile']"
                   [queryParams]="{ address: address }"
-                  class="btn btn-outline-primary btn-sm ms-2"
+                  class="btn btn-primary btn-sm ms-2"
                 >
                   My Profile
                 </a>
-                <button class="btn btn-outline-danger btn-sm ms-2" (click)="disconnectWallet()">
+                <button class="btn btn-outline-primary btn-sm ms-2" (click)="disconnectWallet()">
                   Disconnect
                 </button>
               </div>
@@ -84,22 +84,15 @@ export class HeaderComponent {
     try {
       await this.web3Service.connectWallet();
     } catch (error) {
-      this.dialogService.showError(
-        'Wallet Connection Error',
-        error instanceof Error ? error.message : 'Failed to connect wallet. Please try again.'
-      );
+      this.dialogService.showError('Wallet Connection', 'Failed to connect wallet');
     }
   }
 
   async disconnectWallet() {
     try {
       await this.web3Service.disconnectWallet();
-      this.dialogService.showSuccess('Wallet Disconnected', 'Wallet has been disconnected successfully');
     } catch (error) {
-      this.dialogService.showError(
-        'Wallet Disconnection Error',
-        error instanceof Error ? error.message : 'Failed to disconnect wallet. Please try again.'
-      );
+      this.dialogService.showError('Wallet Disconnection', 'Failed to disconnect wallet');
     }
   }
 }
