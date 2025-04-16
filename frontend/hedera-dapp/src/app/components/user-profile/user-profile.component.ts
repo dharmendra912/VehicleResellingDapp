@@ -1,134 +1,206 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, Router, RouterModule} from '@angular/router';
-import {Web3Service} from '../../services/web3.service';
-import {UserContractService} from '../../services/user-contract.service';
-import {Subscription} from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { UserContractService } from '../../services/user-contract.service';
+import { VehicleContractService } from '../../services/vehicle-contract.service';
+import { Web3Service } from '../../services/web3.service';
+import { LoadingService } from '../../services/loading.service';
+import { DialogService } from '../../services/dialog.service';
+import { Subscription } from 'rxjs';
+
+interface UserProfile {
+  name: string;
+  phone: string;
+  vehicles: string[];
+  walletAddress: string;
+}
+
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.scss']
+  template: `
+    <div class="min-h-screen bg-gray-100 py-8">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto">
+          <!-- Header -->
+          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-1">User Profile</h1>
+            <p class="text-sm text-gray-600">Manage your profile information and vehicles</p>
+          </div>
+
+          <!-- Profile Form -->
+          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <form (ngSubmit)="onSubmit()" class="space-y-8">
+              <!-- Name Field -->
+              <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-3">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  [(ngModel)]="profile.name"
+                  [disabled]="!isEditable"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+                  required
+                />
+              </div>
+
+              <!-- Phone Field -->
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-3">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  [(ngModel)]="profile.phone"
+                  [disabled]="!isEditable"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
+                  required
+                />
+              </div>
+
+              <!-- Wallet Address -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">Wallet Address</label>
+                <div class="mt-1 flex items-center">
+                  <span class="block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-500">
+                    {{ profile.walletAddress }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div *ngIf="isEditable" class="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                  [disabled]="isLoading"
+                >
+                  {{ isLoading ? 'Saving...' : 'Save Profile' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Vehicles Section -->
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Vehicles</h2>
+            
+            <!-- No Vehicles Message -->
+            <div *ngIf="profile.vehicles.length === 0" 
+                 class="text-center py-8 px-4 border-2 border-dashed border-gray-300 rounded-lg">
+              <p class="text-sm text-gray-500">No vehicles registered yet</p>
+            </div>
+
+            <!-- Vehicles List -->
+            <div *ngIf="profile.vehicles.length > 0" class="space-y-1">
+              <a *ngFor="let vehicle of profile.vehicles" 
+                 [routerLink]="['/vehicle', vehicle]"
+                 class="block px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors duration-150">
+                <span class="text-sm font-medium text-gray-900">{{ vehicle }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: []
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
-  profile = {
+  profile: UserProfile = {
     name: '',
     phone: '',
-    vehicles: [] as string[]
+    vehicles: [],
+    walletAddress: ''
   };
   isEditable = false;
-  address: string | null = null;
-  isMetaMaskAvailable = false;
   isLoading = false;
-  private metaMaskSubscription: Subscription | null = null;
-  private routeSubscription: Subscription | null = null;
+  currentUserAddress: string | null = null;
   private userAddressSubscription: Subscription | null = null;
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
+    private userContractService: UserContractService,
+    private vehicleContractService: VehicleContractService,
     private web3Service: Web3Service,
-    private userContractService: UserContractService
-  ) {
-  }
+    private loadingService: LoadingService,
+    private dialogService: DialogService
+  ) {}
 
   ngOnInit() {
-    console.log("User Profile");
-    this.metaMaskSubscription = this.web3Service.isMetaMaskAvailable$.subscribe(
-      (isAvailable: boolean) => {
-        this.isMetaMaskAvailable = isAvailable;
-      }
-    );
-
-    this.routeSubscription = this.route.queryParams.subscribe(params => {
-      const address = params['address'];
-      console.log(address);
+    // Subscribe to user address changes
+    this.userAddressSubscription = this.web3Service.userAddress$.subscribe(async (address) => {
+      this.currentUserAddress = address;
+      
       if (address) {
-        this.address = address;
-        this.isEditable = false;
-        this.loadUserProfile(address);
-      } else {
-        this.userAddressSubscription = this.web3Service.userAddress$.subscribe(
-          (userAddress: string | null) => {
-            if (userAddress) {
-              this.address = userAddress;
-              this.isEditable = true;
-              this.loadUserProfile(userAddress);
-            }
-          }
-        );
+        // Check if we're viewing our own profile
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewAddress = urlParams.get('address');
+        
+        if (viewAddress) {
+          // Viewing another user's profile
+          this.isEditable = false;
+          await this.loadProfile(viewAddress);
+        } else {
+          // Viewing own profile
+          this.isEditable = true;
+          await this.loadProfile(address);
+        }
       }
     });
   }
 
   ngOnDestroy() {
-    if (this.metaMaskSubscription) {
-      this.metaMaskSubscription.unsubscribe();
-    }
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
     if (this.userAddressSubscription) {
       this.userAddressSubscription.unsubscribe();
     }
   }
 
-  async loadUserProfile(address: string) {
+  private async loadProfile(address: string) {
     try {
-      this.isLoading = true;
       console.log('Loading profile for address:', address);
-
-      const currentAddress = await this.web3Service.userAddress$.toPromise();
-      if (!currentAddress) {
-        throw new Error('Please connect your wallet first');
-      } else {
-        console.log("wallet is connected")
-      }
-
-      const profile = await this.userContractService.getUserProfile(address);
-      console.log('Profile loaded:', profile);
-
-      if (profile) {
+      this.loadingService.show();
+      
+      // Fetch user profile data
+      const profileData = await this.userContractService.getUserProfile(address);
+      
+      if (profileData) {
+        // Update the profile object with the fetched data
         this.profile = {
-          name: profile.name,
-          phone: profile.phone,
-          vehicles: profile.vehicles
+          name: profileData.name || '',
+          phone: profileData.phone || '',
+          vehicles: profileData.vehicles || [],
+          walletAddress: address
         };
       }
+
+      console.log('Loaded profile:', this.profile);
     } catch (error) {
-      console.error('Error loading user profile:', error);
-      throw error;
+      console.error('Error loading profile:', error);
+      this.dialogService.showError('Profile Load', 'Failed to load profile');
     } finally {
-      this.isLoading = false;
+      this.loadingService.hide();
     }
   }
 
-  async updateProfile() {
+  async onSubmit() {
+    if (!this.isEditable || !this.currentUserAddress) return;
+
     try {
       this.isLoading = true;
-      console.log('Updating profile...');
-
-      // Ensure we have a connected wallet
-      const currentAddress = await this.web3Service.userAddress$.toPromise();
-      if (!currentAddress) {
-        throw new Error('Please connect your wallet first');
-      }
-
-      await this.userContractService.updateUserProfile(this.profile.name, this.profile.phone);
-      console.log('Profile updated successfully');
-
-      // Reload profile after update
-      if (this.address) {
-        await this.loadUserProfile(this.address);
-      }
+      await this.userContractService.updateUserProfile(
+        this.profile.name,
+        this.profile.phone
+      );
+      this.dialogService.showSuccess('Profile Update', 'Profile updated successfully');
     } catch (error) {
-      console.error('Error updating profile:', error);
-      throw error;
+      this.dialogService.showError('Profile Update', 'Failed to update profile');
     } finally {
       this.isLoading = false;
     }
   }
 }
+

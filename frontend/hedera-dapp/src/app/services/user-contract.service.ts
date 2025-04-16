@@ -59,9 +59,29 @@ export class UserContractService {
     try {
       this.loadingService.show();
       const contract = await this.getContract();
-      const [name, phone, vehicles] = await contract['getUserProfile'](userAddr);
-      return { name, phone, vehicles };
+      
+      console.log('Contract address:', USER_PROFILE_CONTRACT_ADDRESS);
+      console.log('Fetching profile for address:', userAddr);
+      
+      // Use the individual view functions that we know are working
+      const [name, phone, vehicles] = await Promise.all([
+        contract['getUserName'](userAddr),
+        contract['getUserPhone'](userAddr),
+        contract['getUserVehicles'](userAddr)
+      ]);
+      
+      console.log('Raw results:', { name, phone, vehicles });
+      
+      const profile = {
+        name: name || '',
+        phone: phone || '',
+        vehicles: vehicles || []
+      };
+      
+      console.log('Processed profile:', profile);
+      return profile;
     } catch (error) {
+      console.error('Get User Profile error:', error);
       this.handleError(error, 'Get User Profile');
       return null;
     } finally {
