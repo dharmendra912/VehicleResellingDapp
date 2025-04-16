@@ -49,20 +49,6 @@ interface Accident {
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-bold">Vehicle Details</h2>
-          <div *ngIf="isOwner" class="flex space-x-2">
-            <button (click)="showAddMaintenance = true" class="btn btn-primary btn-sm">
-              Add Maintenance
-            </button>
-            <button (click)="showAddInsurance = true" class="btn btn-primary btn-sm">
-              Add Insurance
-            </button>
-            <button (click)="showAddAccident = true" class="btn btn-primary btn-sm">
-              Add Accident
-            </button>
-            <button (click)="showResellForm = true" class="btn btn-primary btn-sm">
-              Resell Vehicle
-            </button>
-          </div>
         </div>
 
         <!-- Debug Info -->
@@ -178,6 +164,24 @@ interface Accident {
                 Sold for: {{ vehicleDetails?.resellHistory?.[i] || 'N/A' }}
               </div>
             </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold">Update Details:</h2>
+          <div *ngIf="isOwner" class="flex space-x-2">
+            <button (click)="showAddMaintenance = true" class="btn btn-primary btn-sm">
+              Add Maintenance
+            </button>
+            <button (click)="showAddInsurance = true" class="btn btn-primary btn-sm">
+              Add Insurance
+            </button>
+            <button (click)="showAddAccident = true" class="btn btn-primary btn-sm">
+              Add Accident
+            </button>
+            <button (click)="showResellForm = true" class="btn btn-primary btn-sm">
+              Resell Vehicle
+            </button>
           </div>
         </div>
       </div>
@@ -438,6 +442,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   }
 
   async addMaintenance() {
+
     if (!this.vehicleDetails) {
       console.log('VehicleDetailsComponent: Cannot add maintenance - vehicle details not available');
       return;
@@ -468,6 +473,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   }
 
   async addInsurance() {
+
     if (!this.vehicleDetails) {
       console.log('VehicleDetailsComponent: Cannot add insurance - vehicle details not available');
       return;
@@ -497,6 +503,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   }
 
   async addAccident() {
+
     if (!this.vehicleDetails) {
       console.log('VehicleDetailsComponent: Cannot add accident - vehicle details not available');
       return;
@@ -527,6 +534,7 @@ export class VehicleDetailsComponent implements OnInit, OnDestroy {
   }
 
   async resellVehicle() {
+
     if (!this.vehicleDetails) {
       console.log('VehicleDetailsComponent: Cannot resell vehicle - vehicle details not available');
       return;
