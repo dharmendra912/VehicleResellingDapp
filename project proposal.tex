@@ -1,0 +1,39 @@
+\documentclass[12pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0em}
+\titleformat{\section}{\large\bfseries}{}{0em}{}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{center}
+    {\Large \textbf{Digital Twin-Enabled Vehicle Lifecycle Platform}}\\[0.5em]
+    {\small CS6858W: Distributed Trust}\\[0.5em]
+    {\small Students: Muzaffar Ahmed (CS23M517), Dharmendra Agrawal (CS23M508)}\\[0.5em]
+    {\small Topic: Digital Twin-Enabled Vehicle Lifecycle Platform}
+\end{center}
+
+\section*{1. The problem our application solves}
+The vehicle reselling market suffers from incomplete, static, or manipulated vehicle histories, making it difficult for buyers to verify the authenticity of records (e.g. ownership transfers, maintenance logs, accident reports). Centralized systems are prone to delays, errors, and data tampering, leading to a trust deficit among buyers, sellers, insurers, and service providers.
+
+\section*{2. Importance of solving said problem}
+Transparent and real-time access to the complete history of a vehicle builds trust among stakeholders, promotes fair transactions, and improves market efficiency. Reliable and dynamic data supports accurate valuation, reduces fraud, allows predictive maintenance, and streamlines processes such as insurance underwriting and title transfers.
+
+\section*{3. Justification for using blockchain/DLT in the solution}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Immutability \& Transparency:} Blockchain’s immutable ledger ensures that all vehicle data (ownership, maintenance, sensor inputs) are permanently recorded and resistant to tampering.
+    \item \textbf{Decentralization \& Automation:} Distributed ledgers (e.g. Hedera Hashgraph) reduce the dependence on a single authority, while smart contracts automate validations and enforce rules in real time.
+\end{itemize}
+
+\section*{4. Challenges blockchain/DLT addresses to solve this problem}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Data Tampering \& Fraud:} Securing every update on a tamper-proof ledger prevents unauthorized alterations and fraudulent activities.
+    \item \textbf{Centralization Risks:} Distributing trust across multiple nodes eliminates the vulnerabilities associated with centralized record keeping.
+    \item \textbf{Verification \& Auditability:} A decentralized, auditable trail ensures transparency, mitigates disputes, and builds stakeholder confidence.
+    \item \textbf{Inefficient Processes:} Automation via smart contracts reduces the delays and human errors inherent in traditional systems.
+\end{itemize}
+
+\end{document}
