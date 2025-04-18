@@ -1,77 +1,48 @@
-# Instruction to compile and deploy a contract
-
-- Node.js (version 20 or higher)
-- npm (Node Package Manager)
-
-1. Navigate to Contracts directory.
-   ```bash
-   cd contracts
-   ```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-# Frontend Setup and Running Instructions
+# Hedera Vehicle Resale DApp
 
 ## Prerequisites
 
-- Node.js (version 20 or higher)
-- npm (Node Package Manager)
+- Node.js ≥ 20
+- npm
 
-## Setup Instructions
+## Backend (Smart Contracts)
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend/hedera-dapp
-   ```
+1. `cd contracts`
+2. `npm install`
+3. `node compileAndDeploy.js <ContractName.sol>`
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+## Frontend
 
-3. Run the javascript utility:
-   ```bash
-   node compileAndDeploy.js <ContractName.sol>
-   ```
-
-## Running the Application
-
-1. Start the development server:
-   ```bash
-   npm start
-   ```
-
-2. The application will be available at:
-   ```
-   http://localhost:4200
-   ```
+1. `cd frontend/hedera-dapp`
+2. `npm install`
+3. `npm start`
+4. Open`http://localhost:4200`
 
 ## Available Scripts
 
-- `npm start`: Starts the development server
+- `npm start`– start Angular 19.2.0 dev server
 
-## Notes
+## Deployment
 
-- The application uses Angular 19.2.0
+- IPFS gateway:  
+  `https://w3s.link/ipfs/bafybeib6mrn3k6427rro7b6jauuebgm7ngzk2cycjcuprzjljdzajsvkl4/`
 
-# Resources
+## Deployed Contracts
 
-- https://hashscan.io/ (to verify transaction)
-- https://portal.hedera.com/playground
-- https://remix.ethereum.org/ (for testing contracts)
-- https://www.rareskills.io/ (for learning)
-- https://solidity-by-example (code references)
-- https://app.pinata.cloud/ipfs/files
+- **VehicleLedger.sol**
+    - Contract ID:`0.0.5864405`
+    - EVM Address:`0x0000000000000000000000000000000000597bd5`
+    - Explorer:`https://hashscan.io/testnet/contract/0.0.5864405`
+- **UserProfile.sol**
+    - Contract ID:`0.0.5864437`
+    - EVM Address:`0x0000000000000000000000000000000000597bf5`
+    - Explorer:`https://hashscan.io/testnet/contract/0.0.5864437`
 
-# Deployment
+## Resources
 
-Deployed on Distributed storage: https://w3s.link/ipfs/bafybeib6mrn3k6427rro7b6jauuebgm7ngzk2cycjcuprzjljdzajsvkl4/
-
-# Contracts:
-
-VehicleLedger.sol - Contract ID: 0.0.5864405 - EVM Address: (0x0000000000000000000000000000000000597bd5)
-UserProfile.sol - Contract ID: 0.0.5864437 - EVM Address: (0x0000000000000000000000000000000000597bf5)
+1. https://hashscan.io/
+2. https://portal.hedera.com/playground
+3. https://remix.ethereum.org/
+4. https://www.rareskills.io/
+5. https://solidity-by-example.org/
+6. https://app.pinata.cloud/ipfs/files  
